@@ -19,6 +19,7 @@ if (process.env.NODE_ENV !== 'production') {
   sequelize = new Sequelize(config.database, config.username,
                                             config.password, config);
 } else if(process.env.NODE_ENV === 'production') {
+  console.log('Binding remoteDB to sequelize')
   sequelize = new Sequelize(process.env.DATABASE_URL, {
   logging: false,
   dialectOptions: {
