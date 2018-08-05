@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "nodejs ./bin/www"
+    "start": "node ./bin/www"
   },
   "dependencies": {
     "express": "~4.0.0",
@@ -12,7 +12,7 @@
     "body-parser": "~1.0.0"
   },
   "engine": {
-    "node": "10.4.0",
+    "nodejs": "10.4.0",
     "npm": "6.1.0"
   }
 }
