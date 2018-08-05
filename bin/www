@@ -1,12 +1,13 @@
 http = require('http');
+const dotenv = require('dotenv');
 
 var app = require('../app');
 
 const port = parseInt(process.env.PORT, 10) || 3000;
 app.set('port', port);
 
-if(process.env.NODE_ENV === 'production') {
-  console.log('IN PRODUCTION ENV');
+if(process.env.NODE_ENV !== 'production') {
+  dotenv.config();
 }
 
 // The app function will be called for every HTTP request that's made against

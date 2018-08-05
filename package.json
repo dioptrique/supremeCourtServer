@@ -9,7 +9,8 @@
     "express": "~4.0.0",
     "morgan": "~1.0.0",
     "cookie-parser": "~1.0.1",
-    "body-parser": "~1.0.0"
+    "body-parser": "~1.0.0",
+    "dotenv": "^4.0.0"
   },
   "engine": {
     "node": "10.4.0",
