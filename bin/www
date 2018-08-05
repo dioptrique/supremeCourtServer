@@ -9,8 +9,10 @@ app.set('port', port);
 if(process.env.NODE_ENV !== 'production') {
   dotenv.config();
 } else {
-  console.log(process.env.DATABASE_URL)
+  console.log("Databse running at: "+process.env.DATABASE_URL)
 }
+
+require('../models');
 
 // The app function will be called for every HTTP request that's made against
 // the server
