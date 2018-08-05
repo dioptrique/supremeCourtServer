@@ -12,12 +12,22 @@ var db = require('../models')
 const addNewRegistrationId = (req, res) => {
   const phoneNo = req.body.phoneNo;
   const registrationId = req.body.registrationId;
+  PhoneNoToRegistrationId = db["PhoneNoToRegistrationId"];
 
-  message = {
-    msg: 'wassup'
-  }
-
-  res.status(200).send({ message })
+  PhoneNoToRegistrationId.findOrCreate({
+                                          where: {phoneNo: phoneNo},
+                                          defaults: {registrationId: registrationId}
+                                        })
+                          .spread((user, created) => {
+                            if(!created) {
+                              user.updateAttributes({
+                                registrationId: registrationId
+                              })
+                            }
+                          })
+                          .then(() =>
+                            res.status(200).send({ message:'success!' })
+                          );
 };
 
 module.exports = {
