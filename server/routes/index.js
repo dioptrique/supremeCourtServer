@@ -1,3 +1,5 @@
+var phoneNoToRegistrationIdController = require('../controllers/phoneNoToRegistrationId')
+
 module.exports = (app) => {
   welcome = {
     message: 'hello'
@@ -6,4 +8,6 @@ module.exports = (app) => {
   app.get('/', function(req, res) {
     res.status(200).send(welcome);
   });
+
+  app.post('/addNewRegistrationId', phoneNoToRegistrationIdController.addNewRegistrationId);
 }
