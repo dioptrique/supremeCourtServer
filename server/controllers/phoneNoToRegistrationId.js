@@ -92,6 +92,7 @@ const sendNotifications = (req, res) => {
           'data': {
             'SupremeCourt': 'Appointment has been booked',
            }
+        }
       })
       .then((response) => console.log(response))
     })})
