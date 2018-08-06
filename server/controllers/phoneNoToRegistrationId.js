@@ -51,10 +51,11 @@ const sendNotifications = (req, res) => {
     PhoneNoToRegistrationId.find({ where: {phoneNo:phoneNo} })
                            .then((phoneNoToRegistrationId) =>
                               registrationIds.push(phoneNoToRegistrationId.registrationId)
+                              console.log('RegistrationIds: '+registrationIds)
                             )
                             .catch((err) => console.log('Error finding corresponding Id: '+err))
   })
-  console.log('RegistrationIds: '+registrationIds)
+
   // Create a notification group on FCM
   axios({
     method: 'post',
