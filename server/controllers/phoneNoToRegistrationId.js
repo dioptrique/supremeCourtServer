@@ -60,7 +60,7 @@ const sendNotifications = (req, res) => {
   })
   // Create a notification group on FCM once all the corresponding regIds are
   // fetched from db
-  Promise.all(promises).then(() => 
+  Promise.all(promises).then(() =>
     axios({
       method: 'post',
       url: 'https://fcm.googleapis.com/fcm/notification',
@@ -76,7 +76,7 @@ const sendNotifications = (req, res) => {
       }
     })
     .then((response) => {
-      console.log('NOTIFICATION KEY: '+response)
+      console.log('NOTIFICATION KEY: '+response.notification_key)
     }))
 
 }
