@@ -30,6 +30,24 @@ const addNewRegistrationId = (req, res) => {
                           );
 };
 
+/**
+ * @function sendNotifications
+ * @summary: API controller that gets the registrationIds corresponding to
+ * phoneNos in the input and creates a FCM device group for the these
+ * registrationIds and sends a notificaiton message to the members of the group.
+ * @param {object} req: request object
+ * @param {object} res: response object
+ * @returns
+ */
+const sendNotifications = (req, res) => {
+  const phoneNos = req.body.phoneNos;
+  PhoneNoToRegistrationId = db["PhoneNoToRegistrationId"];
+  console.log(phoneNos);
+
+  res.status(200).send({ phoneNos })
+};
+
 module.exports = {
-  addNewRegistrationId : addNewRegistrationId
+  addNewRegistrationId : addNewRegistrationId,
+  sendNotifications: sendNotifications
 }
