@@ -46,35 +46,39 @@ const sendNotifications = (req, res) => {
   const phoneNos = req.body.phoneNos;
   console.log(phoneNos);
   var registrationIds = []
+
+  var promises = []
   // Get the corresponding registrationIds to phoneNos
   phoneNos.forEach((phoneNo) => {
-    PhoneNoToRegistrationId.find({ where: {phoneNo:phoneNo} })
+    promises.push(PhoneNoToRegistrationId.find({ where: {phoneNo:phoneNo} })
                            .then((phoneNoToRegistrationId) => {
                                 registrationIds.push(phoneNoToRegistrationId.registrationId)
                                 console.log('RegistrationIds: '+registrationIds)
                               }
                             )
-                            .catch((err) => console.log('Error finding corresponding Id: '+err))
+                            .catch((err) => console.log('Error finding corresponding Id: '+err)))
   })
+  // Create a notification group on FCM once all the corresponding regIds are
+  // fetched from db
+  Promise.all(promises).then(() => 
+    axios({
+      method: 'post',
+      url: 'https://fcm.googleapis.com/fcm/notification',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization':'key=AAAATBUSzKs:APA91bFDorxTw-AXVrFTGhVEtnobQHRLQ2g8pHJqnw5fDwMiFBKPS6kBgatdWDBdKHwnpszMMxzhltpAvvML97Kn6QXSRTQh5dADQ7EUirzQdxfEHAfhmOu1e0IHc-WrKroIOi7Xz6K4c2PUP1gq_El75ppfIHepXw',
+        'project_id':'326771068075'
+      },
+      data: {
+        'operation': 'create',
+        'notification_key_name': uuidv1(),
+        'registration_ids': registrationIds
+      }
+    })
+    .then((response) => {
+      console.log('NOTIFICATION KEY: '+response)
+    }))
 
-  // Create a notification group on FCM
-  axios({
-    method: 'post',
-    url: 'https://fcm.googleapis.com/fcm/notification',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization':'key=AAAATBUSzKs:APA91bFDorxTw-AXVrFTGhVEtnobQHRLQ2g8pHJqnw5fDwMiFBKPS6kBgatdWDBdKHwnpszMMxzhltpAvvML97Kn6QXSRTQh5dADQ7EUirzQdxfEHAfhmOu1e0IHc-WrKroIOi7Xz6K4c2PUP1gq_El75ppfIHepXw',
-      'project_id':'326771068075'
-    },
-    data: {
-      'operation': 'create',
-      'notification_key_name': uuidv1(),
-      'registration_ids': registrationIds
-    }
-  })
-  .then((response) => {
-    console.log('NOTIFICATION KEY: '+response)
-  })
 }
 module.exports = {
   addNewRegistrationId : addNewRegistrationId,
