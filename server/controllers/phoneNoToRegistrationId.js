@@ -78,7 +78,7 @@ const sendNotifications = (req, res) => {
     })
     .then((response) => {
       console.log('NOTIFICATION KEY: ')
-      console.log(response)
+      console.log(response.data.notification_key)
     })})
 
 }
