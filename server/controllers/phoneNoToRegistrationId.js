@@ -89,9 +89,13 @@ const sendNotifications = (req, res) => {
         },
         data: {
           'to': notification_key,
-          'data': {
-            'SupremeCourt': 'Appointment has been booked',
-           }
+          'notification': {
+            'sound': 'default',
+            'gcmSandbox': 'true',
+            'badge': 1,
+            'title' : 'SupremeCourt',
+            'body': 'Time slot was booked! Open your app to confirm/reject.'
+          }
         }
       })
       .then((response) => console.log("Notifications sent: "+response.data))
