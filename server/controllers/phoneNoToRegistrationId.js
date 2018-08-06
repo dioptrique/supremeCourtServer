@@ -94,7 +94,7 @@ const sendNotifications = (req, res) => {
            }
         }
       })
-      .then((response) => console.log(response))
+      .then((response) => console.log("Notifications sent: "+response.data))
     })})
 
 }
