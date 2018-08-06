@@ -53,11 +53,11 @@ const sendNotifications = (req, res) => {
     promises.push(PhoneNoToRegistrationId.find({ where: {phoneNo:phoneNo} })
                            .then((phoneNoToRegistrationId) => {
                                 registrationIds.push(phoneNoToRegistrationId.registrationId)
-                                console.log('RegistrationIds: '+registrationIds)
                               }
                             )
                             .catch((err) => console.log('Error finding corresponding Id: '+err)))
   })
+  console.log('RegistrationsIds :'+registrationsIds)
   // Create a notification group on FCM once all the corresponding regIds are
   // fetched from db
   Promise.all(promises).then(() =>
@@ -76,7 +76,7 @@ const sendNotifications = (req, res) => {
       }
     })
     .then((response) => {
-      console.log('NOTIFICATION KEY: '+response.notification_key)
+      console.log('NOTIFICATION KEY: '+response["notification_key"])
     }))
 
 }
