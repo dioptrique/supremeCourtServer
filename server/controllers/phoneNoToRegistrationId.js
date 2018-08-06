@@ -52,7 +52,9 @@ const sendNotifications = (req, res) => {
                            .then((phoneNoToRegistrationId) =>
                               registrationIds.push(phoneNoToRegistrationId.registrationId)
                             )
+                            .catch((err) => console.log(err))
   })
+  console.log(registrationIds)
   // Create a notification group on FCM
   axios({
     method: 'post',
