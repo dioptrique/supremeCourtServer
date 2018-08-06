@@ -67,17 +67,17 @@ const sendNotifications = (req, res) => {
       url: 'https://fcm.googleapis.com/fcm/notification',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization':'key=AAAATBUSzKs:APA91bFDorxTw-AXVrFTGhVEtnobQHRLQ2g8pHJqnw5fDwMiFBKPS6kBgatdWDBdKHwnpszMMxzhltpAvvML97Kn6QXSRTQh5dADQ7EUirzQdxfEHAfhmOu1e0IHc-WrKroIOi7Xz6K4c2PUP1gq_El75ppfIHepXw',
+        'Authorization': 'key=AAAATBUSzKs:APA91bFDorxTw-AXVrFTGhVEtnobQHRLQ2g8pHJqnw5fDwMiFBKPS6kBgatdWDBdKHwnpszMMxzhltpAvvML97Kn6QXSRTQh5dADQ7EUirzQdxfEHAfhmOu1e0IHc-WrKroIOi7Xz6K4c2PUP1gq_El75ppfIHepXw',
         'project_id':'326771068075'
       },
       data: {
-        'operation': 'create',
-        'notification_key_name': uuidv1(),
-        'registration_ids': registrationIds
+        operation: 'create',
+        notification_key_name: uuidv1(),
+        registration_ids: registrationIds
       }
     })
     .then((response) => {
-      console.log('NOTIFICATION KEY: '+response["notification_key"])
+      console.log('NOTIFICATION KEY: '+response['notification_key'])
     })})
 
 }
