@@ -49,9 +49,10 @@ const sendNotifications = (req, res) => {
   // Get the corresponding registrationIds to phoneNos
   phoneNos.forEach((phoneNo) => {
     PhoneNoToRegistrationId.find({ where: {phoneNo:phoneNo} })
-                           .then((phoneNoToRegistrationId) =>
-                              registrationIds.push(phoneNoToRegistrationId.registrationId)
-                              console.log('RegistrationIds: '+registrationIds)
+                           .then((phoneNoToRegistrationId) => {
+                                registrationIds.push(phoneNoToRegistrationId.registrationId)
+                                console.log('RegistrationIds: '+registrationIds)
+                              }
                             )
                             .catch((err) => console.log('Error finding corresponding Id: '+err))
   })
