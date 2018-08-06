@@ -77,8 +77,23 @@ const sendNotifications = (req, res) => {
       }
     })
     .then((response) => {
-      console.log('NOTIFICATION KEY: ')
-      console.log(response.data.notification_key)
+      var notification_key = response.data.notification_key;
+      console.log('NOTIFICATION KEY: '+notification_key)
+      // Send message to group members
+      axios({
+        method: 'post',
+        url: 'https://fcm.googleapis.com/fcm/send',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'key=AAAATBUSzKs:APA91bFDorxTw-AXVrFTGhVEtnobQHRLQ2g8pHJqnw5fDwMiFBKPS6kBgatdWDBdKHwnpszMMxzhltpAvvML97Kn6QXSRTQh5dADQ7EUirzQdxfEHAfhmOu1e0IHc-WrKroIOi7Xz6K4c2PUP1gq_El75ppfIHepXw'
+        },
+        data: {
+          'to': notification_key,
+          'data': {
+            'SupremeCourt': 'Appointment has been booked',
+           }
+      })
+      .then((response) => console.log(response))
     })})
 
 }
