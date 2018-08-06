@@ -57,7 +57,7 @@ const sendNotifications = (req, res) => {
                             )
                             .catch((err) => console.log('Error finding corresponding Id: '+err)))
   })
-  console.log('RegistrationIds :'+registrationsIds)
+  console.log('RegistrationIds :'+registrationIds)
   // Create a notification group on FCM once all the corresponding regIds are
   // fetched from db
   Promise.all(promises).then(() =>
