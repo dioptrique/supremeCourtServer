@@ -6,6 +6,7 @@
     "start": "node ./server/bin/www"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "body-parser": "~1.0.0",
     "cookie-parser": "~1.0.1",
     "dotenv": "^4.0.0",
@@ -13,7 +14,8 @@
     "morgan": "~1.0.0",
     "pg": "^7.4.3",
     "sequelize": "^4.38.0",
-    "sequelize-cli": "^4.0.0"
+    "sequelize-cli": "^4.0.0",
+    "uuid": "^3.3.2"
   },
   "engine": {
     "node": "10.4.0",

@@ -1,4 +1,7 @@
+var axios = require('axios')
+var uuidv1 = require('uuid/v1')
 var db = require('../models')
+var PhoneNoToRegistrationId = db["PhoneNoToRegistrationId"];
 
 /**
  * @function addNewRegistrationId
@@ -12,7 +15,7 @@ var db = require('../models')
 const addNewRegistrationId = (req, res) => {
   const phoneNo = req.body.phoneNo;
   const registrationId = req.body.registrationId;
-  PhoneNoToRegistrationId = db["PhoneNoToRegistrationId"];
+
 
   PhoneNoToRegistrationId.findOrCreate({
                                           where: {phoneNo: phoneNo},
@@ -41,12 +44,34 @@ const addNewRegistrationId = (req, res) => {
  */
 const sendNotifications = (req, res) => {
   const phoneNos = req.body.phoneNos;
-  PhoneNoToRegistrationId = db["PhoneNoToRegistrationId"];
   console.log(phoneNos);
-
-  res.status(200).send({ phoneNos })
-};
-
+  var registrationIds = []
+  // Get the corresponding registrationIds to phoneNos
+  phoneNos.forEach((phoneNo) => {
+    PhoneNoToRegistrationId.find({ where: {phoneNo:phoneNo} })
+                           .then((phoneNoToRegistrationId) =>
+                              registrationIds.push(phoneNoToRegistrationId.registrationId)
+                            )
+  })
+  // Create a notification group on FCM
+  axios({
+    method: 'post',
+    url: 'https://fcm.googleapis.com/fcm/notification',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization':'key=AAAATBUSzKs:APA91bFDorxTw-AXVrFTGhVEtnobQHRLQ2g8pHJqnw5fDwMiFBKPS6kBgatdWDBdKHwnpszMMxzhltpAvvML97Kn6QXSRTQh5dADQ7EUirzQdxfEHAfhmOu1e0IHc-WrKroIOi7Xz6K4c2PUP1gq_El75ppfIHepXw',
+      'project_id':'326771068075'
+    },
+    data: {
+      'operation': 'create',
+      'notification_key_name': uuidv1(),
+      'registration_ids': registrationIds
+    }
+  })
+  .then((response) => {
+    console.log('NOTIFICATION KEY: '+response)
+  })
+}
 module.exports = {
   addNewRegistrationId : addNewRegistrationId,
   sendNotifications: sendNotifications
