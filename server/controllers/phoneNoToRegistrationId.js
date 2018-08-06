@@ -57,10 +57,11 @@ const sendNotifications = (req, res) => {
                             )
                             .catch((err) => console.log('Error finding corresponding Id: '+err)))
   })
-  console.log('RegistrationIds :'+registrationIds)
+
   // Create a notification group on FCM once all the corresponding regIds are
   // fetched from db
   Promise.all(promises).then(() =>
+    console.log('RegistrationIds :'+registrationIds)
     axios({
       method: 'post',
       url: 'https://fcm.googleapis.com/fcm/notification',
