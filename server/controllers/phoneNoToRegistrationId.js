@@ -70,10 +70,10 @@ const sendNotifications = (req, res) => {
         'Authorization': 'key=AAAATBUSzKs:APA91bFDorxTw-AXVrFTGhVEtnobQHRLQ2g8pHJqnw5fDwMiFBKPS6kBgatdWDBdKHwnpszMMxzhltpAvvML97Kn6QXSRTQh5dADQ7EUirzQdxfEHAfhmOu1e0IHc-WrKroIOi7Xz6K4c2PUP1gq_El75ppfIHepXw',
         'project_id':'326771068075'
       },
-      params: {
-        operation: 'create',
-        notification_key_name: uuidv1(),
-        registration_ids: registrationIds
+      data: {
+        'operation': 'create',
+        'notification_key_name': uuidv1(),
+        'registration_ids': registrationIds
       }
     })
     .then((response) => {
