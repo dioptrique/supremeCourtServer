@@ -32,7 +32,7 @@ const checkBookingStatus = (req, res) => {
         timeslot: booking.timeslot,
         acceptedParties: booking.acceptedParties
       }
-      console.log(response)l
+      console.log(response)
     }
     res.status(200).send({ response })
   })
