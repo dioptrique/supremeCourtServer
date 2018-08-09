@@ -44,6 +44,7 @@ const addNewRegistrationId = (req, res) => {
  * @param {object} res: response object
  * @returns
  */
+// TODO prevent bookings with duplicate hearingIds that are both 'ongoing'
 const bookNow = (req, res) => {
   const phoneNos = req.body.phoneNos;
   const bookerNo = req.body.bookerNo;
@@ -127,17 +128,3 @@ module.exports = {
   addNewRegistrationId : addNewRegistrationId,
   bookNow: bookNow
 }
-
-/*'to': notification_key,
-'notification': {
-  'sound': 'default',
-  'gcmSandbox': 'true',
-  'badge': 1,
-  'title' : 'SupremeCourt',
-  'body': 'Time slot was booked! Open your app to confirm/reject.',
-  'click_action':'com.example.skynet.supremecourt_TARGET_NOTIFICATION'
-},
-'data': {
-  'hearindId': hearingId
-}
-}*/

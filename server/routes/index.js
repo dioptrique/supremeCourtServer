@@ -1,4 +1,5 @@
 var phoneNoToRegistrationIdController = require('../controllers/phoneNoToRegistrationId')
+var bookingController = require('../controllers/booking')
 
 module.exports = (app) => {
   welcome = {
@@ -12,4 +13,6 @@ module.exports = (app) => {
   app.post('/addNewRegistrationId', phoneNoToRegistrationIdController.addNewRegistrationId);
 
   app.post('/bookNow', phoneNoToRegistrationIdController.bookNow);
+
+  app.post('/checkBookingStatus', bookingController.checkBookingStatus);
 }
