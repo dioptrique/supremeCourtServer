@@ -113,6 +113,9 @@ const bookNow = (req, res) => {
               'title' : 'SupremeCourt',
               'body': 'Time slot was booked! Open your app to confirm/reject.',
               'click_action':'com.example.skynet.supremecourt_TARGET_NOTIFICATION'
+            },
+            'data': {
+              'hearindId': hearingId
             }
           }
         })
