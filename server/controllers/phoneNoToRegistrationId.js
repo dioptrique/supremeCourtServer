@@ -44,7 +44,7 @@ const addNewRegistrationId = (req, res) => {
  * @param {object} res: response object
  * @returns
  */
-// TODO resuse
+// TODO
 const bookNow = (req, res) => {
   const phoneNos = req.body.phoneNos;
   const bookerNo = req.body.bookerNo;
@@ -146,8 +146,24 @@ const bookNow = (req, res) => {
           console.log(response.data)
           res.status(200).end();
         })
+        .catch((err) => {
+          console.log(err);
+          res.send(400).end();
+        })
       )
+      .catch((err) => {
+        console.log(err);
+        res.send(400).end();
+      })
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(400).end();
     })})
+    .catch((err) => {
+      console.log(err);
+      res.send(400).end();
+    })
 }
 module.exports = {
   addNewRegistrationId : addNewRegistrationId,
