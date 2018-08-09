@@ -16,7 +16,7 @@ const checkBookingStatus = (req, res) => {
   Booking.findOne({
     where: {
       hearingId: hearingId,
-      status: ongoing
+      status: 'ongoing'
     }
   })
   .then((booking) => {
