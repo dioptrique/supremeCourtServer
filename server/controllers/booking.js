@@ -29,7 +29,8 @@ const checkBookingStatus = (req, res) => {
       response = {
         status: booking.status,
         bookerNo: booking.bookerNo,
-        timeslot: booking.timeslot
+        timeslot: booking.timeslot,
+        acceptedParties: booking.acceptedParties
       }
     }
     res.status(200).send({ response })
