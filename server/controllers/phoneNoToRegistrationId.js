@@ -107,7 +107,7 @@ const bookNow = (req, res) => {
           // Do not allow user to book if there is already a booked or ongoing
           // hearing of the same Id
           if(booking.status === 'ongoing' || booking.status === 'booked') {
-            throw new error('hearing is already being booked or already booked!')
+            throw new Error('hearing is already being booked or already booked!')
           } else {
             // If hearingId already exits and it is 'rejected' or 'expired'
             booking.updateAttributes({

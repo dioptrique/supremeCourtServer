@@ -15,4 +15,6 @@ module.exports = (app) => {
   app.post('/bookNow', phoneNoToRegistrationIdController.bookNow);
 
   app.post('/checkBookingStatus', bookingController.checkBookingStatus);
+
+  app.post('/acceptBooking', bookingController.acceptBooking);
 }

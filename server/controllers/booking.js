@@ -39,6 +39,48 @@ const checkBookingStatus = (req, res) => {
   })
 };
 
+/**
+ * @function acceptBooking
+ * @summary: API controller to update the booking in the bookings table with
+ * the given hearingId such that number of pendingParties decreases by 1 and accepting
+ * party is added to the acceptedParties array. If number of pendingParties hits 0,
+ * the status of the booking turns to 'booked'.
+ * @param {object} req: request object
+ * @param {object} res: response object
+ * @returns
+ */
+const acceptBooking = (req, res) => {
+  const hearingId = req.body.hearingId;
+  const acceptorNo = req.body.acceptorNo;
+
+  Booking.findOne({
+    where: {
+      hearingId: hearingId
+    }
+  })
+  .then((booking) => {
+    var updatedAcceptedParties = booking.acceptedParties;
+    updatedAcceptedParties.push(acceptorNo)
+    if(booking.pendingParties === 1) {
+      booking.updateAttributes({
+        pendingParties: 0,
+        status: 'booked',
+        acceptedParties: updatedAcceptedParties
+      })
+    } else if (booking.pendingParties > 1) {
+        booking.updateAttributes({
+          pendingParties: booking.pendingParties -1,
+          acceptedParties: updatedAcceptedParties
+        })
+    } else {
+      throw new Error('pendingParties is already 0!');
+    }
+    res.send(200).end();
+  })
+  .catch((err) => console.log(err));
+};
+
 module.exports = {
-  checkBookingStatus: checkBookingStatus
+  checkBookingStatus: checkBookingStatus,
+  acceptBooking: acceptBooking
 }
