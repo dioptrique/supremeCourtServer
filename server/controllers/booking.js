@@ -20,7 +20,6 @@ const checkBookingStatus = (req, res) => {
     }
   })
   .then((booking) => {
-    console.log(booking)
     var response;
     if(booking === null) {
       response = {
@@ -29,7 +28,8 @@ const checkBookingStatus = (req, res) => {
     } else {
       response = {
         status: booking.status,
-        bookerNo: booking.bookerNo
+        bookerNo: booking.bookerNo,
+        timeslot: booking.timeslot
       }
     }
     res.status(200).send({ response })
