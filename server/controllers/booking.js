@@ -10,13 +10,14 @@ var Booking = db['Booking'];
  * @param {object} res: response object
  * @returns
  */
+ // TODO change findOne to find to check if there are more than one ongoing
+ // hearing booking of the same hearingId
 const checkBookingStatus = (req, res) => {
   const hearingId = req.body.hearingId;
 
   Booking.findOne({
     where: {
-      hearingId: hearingId,
-      status: 'ongoing'
+      hearingId: hearingId
     }
   })
   .then((booking) => {

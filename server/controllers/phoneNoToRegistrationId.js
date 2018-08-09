@@ -44,7 +44,7 @@ const addNewRegistrationId = (req, res) => {
  * @param {object} res: response object
  * @returns
  */
-// TODO prevent bookings with duplicate hearingIds that are both 'ongoing'
+// TODO resuse
 const bookNow = (req, res) => {
   const phoneNos = req.body.phoneNos;
   const bookerNo = req.body.bookerNo;
@@ -87,14 +87,39 @@ const bookNow = (req, res) => {
     .then((response) => {
       var notification_key = response.data.notification_key;
       console.log('NOTIFICATION KEY: '+notification_key)
-      // Create a an ongoing booking row in the booking column
-      Booking.create({
-        hearingId,
-        timeslot,
-        bookerNo,
-        notificationKey: notification_key,
-        pendingParties: partyCount,
-        status: 'ongoing'
+      // Create a new booking for hearingId if hearingId does not exist.
+      // If hearingId exists then replace the remaining fields with the
+      // new booking information
+      Booking.findOrCreate({
+        where: {hearingId: hearingId},
+        // Create new booking row with the following fields
+        defaults: {
+          hearingId,
+          timeslot,
+          bookerNo,
+          notificationKey: notification_key,
+          pendingParties: partyCount,
+          status: 'ongoing'
+        }
+      })
+      .spread((booking, created) => {
+        if(!created) {
+          // Do not allow user to book if there is already a booked or ongoing
+          // hearing of the same Id
+          if(booking.status === 'ongoing' || booking.status === 'booked') {
+            throw new error('hearing is already being booked or already booked!')
+          } else {
+            // If hearingId already exits and it is 'rejected' or 'expired'
+            booking.updateAttributes({
+              timeslot,
+              bookerNo,
+              notificationKey: notification_key,
+              pendingParties: partyCount,
+              status: 'ongoing',
+              updatedAt: new Date()
+            })
+          }
+        }
       })
       .then(() =>
         // Send message to group members
