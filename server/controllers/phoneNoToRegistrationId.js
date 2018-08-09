@@ -118,7 +118,7 @@ const bookNow = (req, res) => {
         })
         .then((response) => {
           console.log(response.data)
-          res.state(200).end();
+          res.status(200).end();
         })
       )
     })})
