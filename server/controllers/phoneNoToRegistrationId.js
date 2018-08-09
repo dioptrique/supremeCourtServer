@@ -105,29 +105,17 @@ const bookNow = (req, res) => {
             'Authorization': 'key=AAAATBUSzKs:APA91bFDorxTw-AXVrFTGhVEtnobQHRLQ2g8pHJqnw5fDwMiFBKPS6kBgatdWDBdKHwnpszMMxzhltpAvvML97Kn6QXSRTQh5dADQ7EUirzQdxfEHAfhmOu1e0IHc-WrKroIOi7Xz6K4c2PUP1gq_El75ppfIHepXw'
           },
           data: {
-            "message":{
-              "token":notification_key,
-              "notification":{
-                "title":"SupremeCourt",
-                "body":"Time slot was booked."
+            'message': {
+              'token':notification_key,
+              'notification': {
+                'title':'SupremeCourt',
+                'body':'Time slot was booked.'
               },
-              "data" : {
-                "hearingId" : hearingId
+              'data' : {
+                'hearingId' : hearingId
               }
             }
-            /*'to': notification_key,
-            'notification': {
-              'sound': 'default',
-              'gcmSandbox': 'true',
-              'badge': 1,
-              'title' : 'SupremeCourt',
-              'body': 'Time slot was booked! Open your app to confirm/reject.',
-              'click_action':'com.example.skynet.supremecourt_TARGET_NOTIFICATION'
-            },
-            'data': {
-              'hearindId': hearingId
-            }
-          }*/
+          }
         })
         .then((response) => {
           console.log(response.data)
@@ -140,3 +128,17 @@ module.exports = {
   addNewRegistrationId : addNewRegistrationId,
   bookNow: bookNow
 }
+
+/*'to': notification_key,
+'notification': {
+  'sound': 'default',
+  'gcmSandbox': 'true',
+  'badge': 1,
+  'title' : 'SupremeCourt',
+  'body': 'Time slot was booked! Open your app to confirm/reject.',
+  'click_action':'com.example.skynet.supremecourt_TARGET_NOTIFICATION'
+},
+'data': {
+  'hearindId': hearingId
+}
+}*/
