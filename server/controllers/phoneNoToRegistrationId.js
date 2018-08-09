@@ -107,16 +107,18 @@ const bookNow = (req, res) => {
           data: {
             'to': notification_key,
             'notification': {
-            'sound': 'default',
-            'gcmSandbox': 'true',
-            'badge': 1,
-            'title' : 'SupremeCourt',
-            'body': 'Time slot was booked! Open your app to confirm/reject.'
+              'sound': 'default',
+              'gcmSandbox': 'true',
+              'badge': 1,
+              'title' : 'SupremeCourt',
+              'body': 'Time slot was booked! Open your app to confirm/reject.',
+              'click_action':'com.example.skynet.supremecourt_TARGET_NOTIFICATION'
             }
           }
         })
         .then((response) => {
           console.log(response.data)
+          res.state(200).end();
         })
       )
     })})
