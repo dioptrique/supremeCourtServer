@@ -108,7 +108,8 @@ const bookNow = (req, res) => {
               'to':notification_key,
               'notification': {
                 'title':'SupremeCourt',
-                'body':'Time slot was booked.'
+                'body':'Time slot was booked.',
+                'click_action':'com.example.skynet.supremecourt_TARGET_NOTIFICATION'
               },
               'data' : {
                 'hearingId' : hearingId
