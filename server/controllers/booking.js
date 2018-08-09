@@ -20,6 +20,7 @@ const checkBookingStatus = (req, res) => {
     }
   })
   .then((booking) => {
+    console.log(booking)
     var response;
     if(booking === null) {
       response = {
