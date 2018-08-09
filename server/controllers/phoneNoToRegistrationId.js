@@ -105,7 +105,17 @@ const bookNow = (req, res) => {
             'Authorization': 'key=AAAATBUSzKs:APA91bFDorxTw-AXVrFTGhVEtnobQHRLQ2g8pHJqnw5fDwMiFBKPS6kBgatdWDBdKHwnpszMMxzhltpAvvML97Kn6QXSRTQh5dADQ7EUirzQdxfEHAfhmOu1e0IHc-WrKroIOi7Xz6K4c2PUP1gq_El75ppfIHepXw'
           },
           data: {
-            'to': notification_key,
+            "message":{
+              "token":notification_key,
+              "notification":{
+                "title":"SupremeCourt",
+                "body":"Time slot was booked."
+              },
+              "data" : {
+                "hearingId" : hearingId
+              }
+            }
+            /*'to': notification_key,
             'notification': {
               'sound': 'default',
               'gcmSandbox': 'true',
@@ -117,7 +127,7 @@ const bookNow = (req, res) => {
             'data': {
               'hearindId': hearingId
             }
-          }
+          }*/
         })
         .then((response) => {
           console.log(response.data)
