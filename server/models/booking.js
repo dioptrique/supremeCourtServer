@@ -31,12 +31,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM('ongoing','booked','rejected','expired'),
       allowNull:false,
       defaultValue: 'ongoing'
-    }
     },
     acceptedParties: {
       type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: false,
       defaultValue: []
-    });
+    }
+  });
   return Booking;
 };
