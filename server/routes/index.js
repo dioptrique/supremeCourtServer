@@ -11,5 +11,5 @@ module.exports = (app) => {
 
   app.post('/addNewRegistrationId', phoneNoToRegistrationIdController.addNewRegistrationId);
 
-  app.post('/sendNotifications', phoneNoToRegistrationIdController.sendNotifications);
+  app.post('/bookNow', phoneNoToRegistrationIdController.bookNow);
 }

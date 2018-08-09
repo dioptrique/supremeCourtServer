@@ -2,6 +2,7 @@ var axios = require('axios')
 var uuidv1 = require('uuid/v1')
 var db = require('../models')
 var PhoneNoToRegistrationId = db["PhoneNoToRegistrationId"];
+var Booking = db['Booking'];
 
 /**
  * @function addNewRegistrationId
@@ -34,16 +35,22 @@ const addNewRegistrationId = (req, res) => {
 };
 
 /**
- * @function sendNotifications
+ * @function bookNow
  * @summary: API controller that gets the registrationIds corresponding to
  * phoneNos in the input and creates a FCM device group for the these
  * registrationIds and sends a notificaiton message to the members of the group.
+ * Then, a new booking is inserted into the Bookings table
  * @param {object} req: request object
  * @param {object} res: response object
  * @returns
  */
-const sendNotifications = (req, res) => {
+const bookNow = (req, res) => {
   const phoneNos = req.body.phoneNos;
+  const bookerNo = req.body.bookerNo;
+  const timeslot = req.body.timeslot;
+  const hearingId = req.body.hearingId;
+  const partyCount = req.body.partyCount;
+
   console.log(phoneNos);
   var registrationIds = []
 
@@ -79,32 +86,42 @@ const sendNotifications = (req, res) => {
     .then((response) => {
       var notification_key = response.data.notification_key;
       console.log('NOTIFICATION KEY: '+notification_key)
-      // Send message to group members
-      axios({
-        method: 'post',
-        url: 'https://fcm.googleapis.com/fcm/send',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'key=AAAATBUSzKs:APA91bFDorxTw-AXVrFTGhVEtnobQHRLQ2g8pHJqnw5fDwMiFBKPS6kBgatdWDBdKHwnpszMMxzhltpAvvML97Kn6QXSRTQh5dADQ7EUirzQdxfEHAfhmOu1e0IHc-WrKroIOi7Xz6K4c2PUP1gq_El75ppfIHepXw'
-        },
-        data: {
-          'to': notification_key,
-          'notification': {
+      // Create a an ongoing booking row in the booking column
+      Booking.create({
+        hearingId,
+        timeslot,
+        bookerNo,
+        notificationKey: notification_key,
+        pendingParties: partyCount,
+        status: 'ongoing'
+      })
+      .then(() =>
+        // Send message to group members
+        axios({
+          method: 'post',
+          url: 'https://fcm.googleapis.com/fcm/send',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'key=AAAATBUSzKs:APA91bFDorxTw-AXVrFTGhVEtnobQHRLQ2g8pHJqnw5fDwMiFBKPS6kBgatdWDBdKHwnpszMMxzhltpAvvML97Kn6QXSRTQh5dADQ7EUirzQdxfEHAfhmOu1e0IHc-WrKroIOi7Xz6K4c2PUP1gq_El75ppfIHepXw'
+          },
+          data: {
+            'to': notification_key,
+            'notification': {
             'sound': 'default',
             'gcmSandbox': 'true',
             'badge': 1,
             'title' : 'SupremeCourt',
             'body': 'Time slot was booked! Open your app to confirm/reject.'
+            }
           }
-        }
-      })
-      .then((response) => {
-        console.log(response.data)
-      })
+        })
+        .then((response) => {
+          console.log(response.data)
+        })
+      )
     })})
-
 }
 module.exports = {
   addNewRegistrationId : addNewRegistrationId,
-  sendNotifications: sendNotifications
+  bookNow: bookNow
 }
