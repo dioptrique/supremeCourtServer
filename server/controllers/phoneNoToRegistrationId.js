@@ -1,5 +1,5 @@
 var axios = require('axios')
-var uuidv1 = require('uuid/v1')
+var uuidv4 = require('uuid/v4')
 var db = require('../models')
 var PhoneNoToRegistrationId = db["PhoneNoToRegistrationId"];
 var Booking = db['Booking'];
@@ -80,7 +80,7 @@ const bookNow = (req, res) => {
       },
       data: {
         'operation': 'create',
-        'notification_key_name': uuidv1(),
+        'notification_key_name': uuidv4(),
         'registration_ids': registrationIds
       }
     })
@@ -102,6 +102,7 @@ const bookNow = (req, res) => {
           status: 'ongoing'
         }
       })
+
       .spread((booking, created) => {
         if(!created) {
           // Do not allow user to book if there is already a booked or ongoing
@@ -134,7 +135,7 @@ const bookNow = (req, res) => {
               'to':notification_key,
               'notification': {
                 'title':'SupremeCourt',
-                'body':'Time slot was booked.',
+                'body':'Time slot was selected. Press to confirm.',
                 'click_action':'com.example.skynet.supremecourt_TARGET_NOTIFICATION'
               },
               'data' : {
