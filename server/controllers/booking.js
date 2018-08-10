@@ -80,7 +80,34 @@ const acceptBooking = (req, res) => {
   .catch((err) => console.log(err));
 };
 
+/**
+ * @function rejectBooking
+ * @summary: API controller to update the booking in the bookings table with
+ * the given hearingId such that status of booking changes to rejected.
+ * @param {object} req: request object
+ * @param {object} res: response object
+ * @returns
+ */
+ // TODO send notifications to all other users upon rejection
+const rejectBooking = (req, res) => {
+  const hearingId = req.body.hearingId;
+  const rejectorNo = req.body.rejectorNo;
+
+  Booking.findOne({
+    where: {
+      hearingId: hearingId
+    }
+  })
+  .then((booking) => {
+    booking.updateAttributes({
+      status: 'rejected'
+    })
+    res.send(200).end();
+  })
+  .catch((err) => console.log(err));
+};
 module.exports = {
   checkBookingStatus: checkBookingStatus,
-  acceptBooking: acceptBooking
+  acceptBooking: acceptBooking,
+  rejectBooking: rejectBooking
 }

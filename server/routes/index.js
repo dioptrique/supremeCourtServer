@@ -17,4 +17,6 @@ module.exports = (app) => {
   app.post('/checkBookingStatus', bookingController.checkBookingStatus);
 
   app.post('/acceptBooking', bookingController.acceptBooking);
+
+  app.post('/rejectBooking', bookingController.rejectBooking);
 }
