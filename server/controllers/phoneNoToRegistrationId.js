@@ -103,12 +103,12 @@ const bookNow = (req, res) => {
         // Create new booking row with the following fields
         defaults: {
           hearingId,
-          hearingDate,
           timeslot,
           bookerNo,
           notificationKey: notification_key,
           pendingParties: partyCount,
-          status: 'ongoing'
+          status: 'ongoing',
+          hearingDate: hearingDate
         }
       })
 
