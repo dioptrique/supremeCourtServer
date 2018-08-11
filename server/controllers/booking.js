@@ -67,7 +67,7 @@ const acceptBooking = (req, res) => {
     // in the db receive the Booked notification except for the current
     // party(last acceptor)
     var notifiedParties = booking.acceptedParties.slice();
-    notifiedParties.push[booking.bookerNo];
+    notifiedParties.push(booking.bookerNo);
     console.log('notification parties:')
     console.log(notifiedParties)
 
@@ -186,8 +186,7 @@ const rejectBooking = (req, res) => {
   })
   .then((booking) => {
     var notifiedParties = booking.acceptedParties.slice();
-    console.log('Pushing booker no to notification party: '+booking.bookerNo)
-    notifiedParties.push[booking.bookerNo];
+    notifiedParties.push(booking.bookerNo);
     console.log('notification parties:')
     console.log(notifiedParties)
     booking.updateAttributes({
