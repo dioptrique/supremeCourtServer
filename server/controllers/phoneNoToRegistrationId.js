@@ -59,6 +59,7 @@ const bookNow = (req, res, next) => {
   const venue = hearingIdToHearing.get(hearingId).Venue;
   const partyCount = hearingIdToHearing.get(hearingId).PartiesList.Party.length;
   console.log('PARTY COUNT: '+partyCount);
+  var alreadyBooked = false;
 
   //Check if timeslot is already taken on the same day and venue
   Booking.find({
@@ -75,6 +76,7 @@ const bookNow = (req, res, next) => {
     console.log('booking on same timeslot,venue and date: ')
     console.log(booking);
     if(booking !== null) {
+      alreadyBooked = true;
       console.log('Time slot is already being booked or is already booked');
       res.status(200).send({timeslotAvailable: false})
     }
@@ -83,6 +85,9 @@ const bookNow = (req, res, next) => {
     console.log(err)
   })
 
+  if(alreadyBooked) {
+    return;
+  }
   //If there is only a single party in the hearing
   if(partyCount === 1) {
     console.log('PARTY COUNT IS 1');
