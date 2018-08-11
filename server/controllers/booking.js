@@ -147,6 +147,7 @@ const acceptBooking = (req, res) => {
             res.status(400).end();
           })
       })
+      .catch((err) => { console.log(err) })
     })
     } else if (booking.pendingParties > 1) {
         booking.updateAttributes({
