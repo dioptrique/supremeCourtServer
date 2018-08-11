@@ -76,12 +76,13 @@ const getAvailableTimeslots = (req, res) => {
   })
   .then((bookings) => {
     console.log(bookings);
-    console.log(bookings.length);
+    var availableTimeslots = []
     if(bookings !== null) {
+      console.log(bookings.length);
       const reducer = (total,currValue) =>{ total.push(currValue.timeslot); return total; }
       var unavailableTimeslots = bookings.reduce(reducer,[])
       console.log(unavailableTimeslots)
-      var availableTimeslots = allTimeslots.filter(timeslot => !(unavailableTimeslots.includes(timeslot)))
+      availableTimeslots = allTimeslots.filter(timeslot => !(unavailableTimeslots.includes(timeslot)))
       console.log(availableTimeslots)
     } else {
       availableTimeslots = allTimeslots;
