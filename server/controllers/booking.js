@@ -87,7 +87,7 @@ const getAvailableTimeslots = (req, res) => {
     } else {
       availableTimeslots = allTimeslots;
     }
-
+    console.log(availableTimeslots)
     res.status(200).send({ availableTimeslots,allTimeslots })
   })
 };
