@@ -59,7 +59,11 @@ const getAvailableTimeslots = (req, res) => {
   const hearingId = req.body.hearingId;
   const hearingDate = hearingIdToHearing.get(hearingId).Date.split(' ')[0];
   const venue = hearingIdToHearing.get(hearingId).Venue;
-
+  var allTimeslots = ["09:00","09:30","10:00",
+      "10:30","11:00","11:30",
+      "14:00","14:30","15:00",
+      "15:30","16:00","16:30",
+      "17:00","17:30"]
   Booking.find({
     // Get all the bookings on the same day and venue
     where: {
@@ -72,17 +76,17 @@ const getAvailableTimeslots = (req, res) => {
   })
   .then((bookings) => {
     console.log(bookings);
-    var allTimeslots = ["09:00","09:30","10:00",
-        "10:30","11:00","11:30",
-        "14:00","14:30","15:00",
-        "15:30","16:00","16:30",
-        "17:00","17:30"]
-    const reducer = (total,currValue) =>{ total.push(currValue.timeslot); return total; }
-    var unavailableTimeslots = bookings.reduce(reducer,[])
+    var availableTimeslots;
 
-    console.log(unavailableTimeslots)
-    var availableTimeslots = allTimeslots.filter(timeslot => !(unavailableTimeslots.includes(timeslot)))
-    console.log(availableTimeslots)
+    if(bookings !== null) {
+      const reducer = (total,currValue) =>{ total.push(currValue.timeslot); return total; }
+      var unavailableTimeslots = bookings.reduce(reducer,[])
+      console.log(unavailableTimeslots)
+      var availableTimeslots = allTimeslots.filter(timeslot => !(unavailableTimeslots.includes(timeslot)))
+      console.log(availableTimeslots)
+    } else {
+      availableTimeslots = allTimeslots;
+    }
 
     res.status(200).send({ availableTimeslots,allTimeslots })
   })
