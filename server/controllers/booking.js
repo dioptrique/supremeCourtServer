@@ -256,8 +256,10 @@ const rejectBooking = (req, res) => {
           res.status(400).end();
         })
     })
-  .catch((err) => console.log(err));
-};
+    .catch((err) => console.log(err));
+  })
+})
+}
 module.exports = {
   checkBookingStatus: checkBookingStatus,
   acceptBooking: acceptBooking,
