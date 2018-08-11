@@ -4,6 +4,9 @@ var db = require('../models')
 var PhoneNoToRegistrationId = db["PhoneNoToRegistrationId"];
 var Booking = db['Booking'];
 var hearingIdToHearing = require('../data');
+var Sequelize = require('sequelize')
+
+const Op = Sequelize.Op;
 
 /**
  * @function addNewRegistrationId
@@ -56,12 +59,14 @@ const bookNow = (req, res, next) => {
   const hearingId = req.body.hearingId;
   const partyCount = req.body.partyCount;
   const hearingDate = hearingIdToHearing.get(hearingId).Date.split(' ')[0];
+  const venue = hearingIdToHearing.get(hearingId).Venue;
 
-  //Check if timeslot is already taken another hearing on the same day
+  //Check if timeslot is already taken by another hearing on the same day and venue
   Booking.find({
     where: {
       hearingDate: hearingDate,
       [Op.and]: {timeslot: timeslot},
+      [Op.and]: {venue: venue},
       [Op.and]: {
         status: 'ongoing',
         [Op.or]: {status: 'booked'}
