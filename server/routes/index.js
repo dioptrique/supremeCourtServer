@@ -20,5 +20,5 @@ module.exports = (app) => {
 
   app.post('/rejectBooking', bookingController.rejectBooking);
 
-  //app.post('/getAvailableTimeSlots')
+  app.post('/getAvailableTimeSlots', bookingController.getAvailableTimeslots);
 }

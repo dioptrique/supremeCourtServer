@@ -2,7 +2,11 @@ var db = require('../models');
 var Booking = db['Booking'];
 var PhoneNoToRegistrationId = db['PhoneNoToRegistrationId'];
 var uuidv4 = require('uuid/v4');
-var axios = require('axios')
+var axios = require('axios');
+var hearingIdToHearing = require('../data');
+var Sequelize = require('sequelize')
+
+const Op = Sequelize.Op;
 
 /**
  * @function checkBookingStatus
@@ -39,6 +43,48 @@ const checkBookingStatus = (req, res) => {
       console.log(response)
     }
     res.status(200).send({ response })
+  })
+};
+
+/**
+ * @function getAvailableTimeslots
+ * @summary: API controller to get the timeslots to a particular hearing
+ * that are not already booked or ongoing on the same date and venue
+ * @param {object} req: request object
+ * @param {object} res: response object
+ * @returns
+ */
+ //TODO all timeslots should depend on hearing time?
+const getAvailableTimeslots = (req, res) => {
+  const hearingId = req.body.hearingId;
+  const hearingDate = hearingIdToHearing.get(hearingId).Date.split(' ')[0];
+  const venue = hearingIdToHearing.get(hearingId).Venue;
+
+  Booking.find({
+    // Get all the bookings on the same day and venue
+    where: {
+      [Op.and]: [
+        {hearingDate: hearingDate},
+        {venue: venue},
+        {[Op.or]: [{status:'ongoing'},{status:'booked'}]}
+      ]
+    }
+  })
+  .then((bookings) => {
+    console.log(bookings);
+    var allTimeslots = ["09:00","09:30","10:00",
+        "10:30","11:00","11:30",
+        "14:00","14:30","15:00",
+        "15:30","16:00","16:30",
+        "17:00","17:30"]
+    const reducer = (total,currValue) =>{ total.push(currValue.timeslot); return total; }
+    var unavailableTimeslots = bookings.reduce(reducer,[])
+
+    console.log(unavailableTimeslots)
+    var availableTimeslots = allTimeslots.filter(timeslot => !(unavailableTimeslots.includes(timeslot)))
+    console.log(availableTimeslots)
+
+    res.status(200).send({ availableTimeslots,allTimeslots })
   })
 };
 
@@ -268,5 +314,6 @@ const rejectBooking = (req, res) => {
 module.exports = {
   checkBookingStatus: checkBookingStatus,
   acceptBooking: acceptBooking,
-  rejectBooking: rejectBooking
+  rejectBooking: rejectBooking,
+  getAvailableTimeslots: getAvailableTimeslots
 }
