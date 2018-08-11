@@ -64,7 +64,7 @@ const getAvailableTimeslots = (req, res) => {
       "14:00","14:30","15:00",
       "15:30","16:00","16:30",
       "17:00","17:30"]
-  Booking.find({
+  Booking.findAll({
     // Get all the bookings on the same day and venue
     where: {
       [Op.and]: [
