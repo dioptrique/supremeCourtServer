@@ -8,6 +8,10 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: false,
       unique: false
     },
+    hearingDate: {
+      type:DataTypes.STRING,
+      allowNull: false
+    },
     timeslot: {
       type: DataTypes.STRING,
       allowNull: false
