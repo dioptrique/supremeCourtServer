@@ -25,11 +25,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: false
     },
-    notificationKey: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: false
-    },
     pendingParties: {
       type: DataTypes.INTEGER,
       allowNull: false,

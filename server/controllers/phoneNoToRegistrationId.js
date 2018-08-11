@@ -48,20 +48,18 @@ const addNewRegistrationId = (req, res) => {
  * @param {object} res: response object
  * @returns
  */
-// TODO Check if timeslot is already taken by another hearingId on the
-// same day(ongoing or booked)
 // TODO set timer to set booking to expired after X mins
-// TODO get party count from server instead of clients
+// TODO handle single party case differently
 const bookNow = (req, res, next) => {
   const phoneNos = req.body.phoneNos;
   const bookerNo = req.body.bookerNo;
   const timeslot = req.body.timeslot;
   const hearingId = req.body.hearingId;
-  const partyCount = req.body.partyCount;
   const hearingDate = hearingIdToHearing.get(hearingId).Date.split(' ')[0];
   const venue = hearingIdToHearing.get(hearingId).Venue;
+  const partyCount = hearingIdToHearing.get(hearingId).PartiesList.length;
 
-  //Check if timeslot is already taken by another hearing on the same day and venue
+  //Check if timeslot is already taken on the same day and venue
   Booking.find({
     where: {
       hearingDate: hearingDate,
@@ -84,6 +82,28 @@ const bookNow = (req, res, next) => {
     console.log()
   })
 
+  //If there is only a single party in the hearing
+  if(partyCount === 1) {
+    Booking.create({
+      hearingId: hearingId,
+      hearingDate: hearingDate,
+      venue: venue,
+      bookerNo: bookerNo,
+      timeslot: timeslot,
+      status: 'booked',
+      pendingParties: 0
+    })
+    .then(() => {
+      res.status(200).send({timeslotAvailable: true})
+      next();
+    })
+    .catch((err) => {
+      console.log('Single party booking failed');
+      res.status(400).end();
+      next();
+    })
+  }
+  // If there are other parties that need to accept the booking
   var registrationIds = []
   var promises = []
   // Get the corresponding registrationIds to phoneNos
@@ -116,7 +136,6 @@ const bookNow = (req, res, next) => {
     })
     .then((response) => {
       var notification_key = response.data.notification_key;
-      console.log('NOTIFICATION KEY: '+notification_key)
       // Create a new booking for hearingId if hearingId does not exist.
       // If hearingId exists then replace the remaining fields with the
       // new booking information
@@ -127,8 +146,7 @@ const bookNow = (req, res, next) => {
           hearingId,
           timeslot,
           bookerNo,
-          notificationKey: notification_key,
-          pendingParties: partyCount,
+          pendingParties: partyCount - 1,
           status: 'ongoing',
           hearingDate: hearingDate,
           venue: venue
@@ -145,8 +163,7 @@ const bookNow = (req, res, next) => {
             booking.updateAttributes({
               timeslot,
               bookerNo,
-              notificationKey: notification_key,
-              pendingParties: partyCount,
+              pendingParties: partyCount - 1,
               status: 'ongoing',
               updatedAt: new Date()
             })
