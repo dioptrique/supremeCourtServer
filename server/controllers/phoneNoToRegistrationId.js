@@ -55,7 +55,8 @@ const bookNow = (req, res) => {
   const timeslot = req.body.timeslot;
   const hearingId = req.body.hearingId;
   const partyCount = req.body.partyCount;
-  const hearingDate = hearingIdToHearing.get(hearingId).Date.split(" ")[0];
+  console.log('Test2 map '+hearingIdToHearing.get('296267').Date)
+  const hearingDate = hearingIdToHearing.get(hearingId).Date.split(' ')[0];
 
   console.log(phoneNos);
   var registrationIds = []
