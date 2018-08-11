@@ -104,122 +104,125 @@ const bookNow = (req, res, next) => {
       res.status(400).end();
       next();
     })
-  }
-  // If there are other parties that need to accept the booking
-  var registrationIds = []
-  var promises = []
-  // Get the corresponding registrationIds to phoneNos
-  phoneNos.forEach((phoneNo) => {
-    promises.push(PhoneNoToRegistrationId.find({ where: {phoneNo:phoneNo} })
-                           .then((phoneNoToRegistrationId) => {
-                                registrationIds.push(phoneNoToRegistrationId.registrationId)
-                              }
-                            )
-                            .catch((err) => console.log('Error finding corresponding Id: '+err)))
-  })
-
-  // Create a notification group on FCM once all the corresponding regIds are
-  // fetched from db
-  Promise.all(promises).then(() => {
-    console.log('RegistrationIds :'+registrationIds)
-    axios({
-      method: 'post',
-      url: 'https://fcm.googleapis.com/fcm/notification',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'key=AAAATBUSzKs:APA91bFDorxTw-AXVrFTGhVEtnobQHRLQ2g8pHJqnw5fDwMiFBKPS6kBgatdWDBdKHwnpszMMxzhltpAvvML97Kn6QXSRTQh5dADQ7EUirzQdxfEHAfhmOu1e0IHc-WrKroIOi7Xz6K4c2PUP1gq_El75ppfIHepXw',
-        'project_id':'326771068075'
-      },
-      data: {
-        'operation': 'create',
-        'notification_key_name': uuidv4(),
-        'registration_ids': registrationIds
-      }
+  } else {
+    // If there are other parties that need to accept the booking
+    var registrationIds = []
+    var promises = []
+    // Get the corresponding registrationIds to phoneNos
+    phoneNos.forEach((phoneNo) => {
+      promises.push(PhoneNoToRegistrationId.find({ where: {phoneNo:phoneNo} })
+                             .then((phoneNoToRegistrationId) => {
+                                  registrationIds.push(phoneNoToRegistrationId.registrationId)
+                                }
+                              )
+                              .catch((err) => console.log('Error finding corresponding Id: '+err)))
     })
-    .then((response) => {
-      var notification_key = response.data.notification_key;
-      // Create a new booking for hearingId if hearingId does not exist.
-      // If hearingId exists then replace the remaining fields with the
-      // new booking information
-      Booking.findOrCreate({
-        where: {hearingId: hearingId},
-        // Create new booking row with the following fields
-        defaults: {
-          hearingId,
-          timeslot,
-          bookerNo,
-          pendingParties: partyCount - 1,
-          status: 'ongoing',
-          hearingDate: hearingDate,
-          venue: venue
+
+    // Create a notification group on FCM once all the corresponding regIds are
+    // fetched from db
+    Promise.all(promises).then(() => {
+      console.log('RegistrationIds :'+registrationIds)
+      axios({
+        method: 'post',
+        url: 'https://fcm.googleapis.com/fcm/notification',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'key=AAAATBUSzKs:APA91bFDorxTw-AXVrFTGhVEtnobQHRLQ2g8pHJqnw5fDwMiFBKPS6kBgatdWDBdKHwnpszMMxzhltpAvvML97Kn6QXSRTQh5dADQ7EUirzQdxfEHAfhmOu1e0IHc-WrKroIOi7Xz6K4c2PUP1gq_El75ppfIHepXw',
+          'project_id':'326771068075'
+        },
+        data: {
+          'operation': 'create',
+          'notification_key_name': uuidv4(),
+          'registration_ids': registrationIds
         }
       })
-      .spread((booking, created) => {
-        if(!created) {
-          // Do not allow user to book if there is already a booked or ongoing
-          // hearing of the same Id
-          if(booking.status === 'ongoing' || booking.status === 'booked') {
-            throw new Error('hearing is already being booked or already booked!')
-          } else {
-            // If hearingId already exits and it is 'rejected' or 'expired'
-            booking.updateAttributes({
-              timeslot,
-              bookerNo,
-              pendingParties: partyCount - 1,
-              status: 'ongoing',
-              updatedAt: new Date()
-            })
+      .then((response) => {
+        var notification_key = response.data.notification_key;
+        // Create a new booking for hearingId if hearingId does not exist.
+        // If hearingId exists then replace the remaining fields with the
+        // new booking information
+        Booking.findOrCreate({
+          where: {hearingId: hearingId},
+          // Create new booking row with the following fields
+          defaults: {
+            hearingId,
+            timeslot,
+            bookerNo,
+            pendingParties: partyCount - 1,
+            status: 'ongoing',
+            hearingDate: hearingDate,
+            venue: venue
           }
-        }
-      })
-      .then(() =>
-        // Send message to group members
-        axios({
-          method: 'post',
-          url: 'https://fcm.googleapis.com/fcm/send',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'key=AAAATBUSzKs:APA91bFDorxTw-AXVrFTGhVEtnobQHRLQ2g8pHJqnw5fDwMiFBKPS6kBgatdWDBdKHwnpszMMxzhltpAvvML97Kn6QXSRTQh5dADQ7EUirzQdxfEHAfhmOu1e0IHc-WrKroIOi7Xz6K4c2PUP1gq_El75ppfIHepXw'
-          },
-          data: {
-              'to':notification_key,
-              'notification': {
-                'title':'SupremeCourt',
-                'body':'Time slot '+timeslot+' was selected. Press to confirm.',
-                'click_action':'com.example.skynet.supremecourt_TARGET_NOTIFICATION'
-              },
-              'data' : {
-                'hearingId' : hearingId
-              }
+        })
+        .spread((booking, created) => {
+          if(!created) {
+            // Do not allow user to book if there is already a booked or ongoing
+            // hearing of the same Id
+            if(booking.status === 'ongoing' || booking.status === 'booked') {
+              throw new Error('hearing is already being booked or already booked!')
+            } else {
+              // If hearingId already exits and it is 'rejected' or 'expired'
+              booking.updateAttributes({
+                timeslot,
+                bookerNo,
+                pendingParties: partyCount - 1,
+                status: 'ongoing',
+                updatedAt: new Date()
+              })
             }
+          }
         })
-        .then((response) => {
-          console.log(response.data)
-          res.status(200).send({timeslotAvailable: true});
-          next();
-        })
+        .then(() =>
+          // Send message to group members
+          axios({
+            method: 'post',
+            url: 'https://fcm.googleapis.com/fcm/send',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'key=AAAATBUSzKs:APA91bFDorxTw-AXVrFTGhVEtnobQHRLQ2g8pHJqnw5fDwMiFBKPS6kBgatdWDBdKHwnpszMMxzhltpAvvML97Kn6QXSRTQh5dADQ7EUirzQdxfEHAfhmOu1e0IHc-WrKroIOi7Xz6K4c2PUP1gq_El75ppfIHepXw'
+            },
+            data: {
+                'to':notification_key,
+                'notification': {
+                  'title':'SupremeCourt',
+                  'body':'Time slot '+timeslot+' was selected. Press to confirm.',
+                  'click_action':'com.example.skynet.supremecourt_TARGET_NOTIFICATION'
+                },
+                'data' : {
+                  'hearingId' : hearingId
+                }
+              }
+          })
+          .then((response) => {
+            console.log(response.data)
+            res.status(200).send({timeslotAvailable: true});
+            next();
+          })
+          .catch((err) => {
+            console.log(err);
+            res.status(400).end();
+            next();
+          })
+        )
         .catch((err) => {
           console.log(err);
           res.status(400).end();
           next();
         })
-      )
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(400).end();
+        next();
+      })})
       .catch((err) => {
         console.log(err);
         res.status(400).end();
         next();
       })
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(400).end();
-      next();
-    })})
-    .catch((err) => {
-      console.log(err);
-      res.status(400).end();
-      next();
-    })
+  }
+
+
 }
 module.exports = {
   addNewRegistrationId : addNewRegistrationId,
