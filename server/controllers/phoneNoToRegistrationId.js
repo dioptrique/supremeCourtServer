@@ -58,6 +58,7 @@ const bookNow = (req, res, next) => {
   const hearingDate = hearingIdToHearing.get(hearingId).Date.split(' ')[0];
   const venue = hearingIdToHearing.get(hearingId).Venue;
   const partyCount = hearingIdToHearing.get(hearingId).PartiesList.length;
+  console.log('PARTY COUNT: '+partyCount);
 
   //Check if timeslot is already taken on the same day and venue
   Booking.find({
@@ -84,6 +85,7 @@ const bookNow = (req, res, next) => {
 
   //If there is only a single party in the hearing
   if(partyCount === 1) {
+    console.log('PARTY COUNT IS 1');
     Booking.create({
       hearingId: hearingId,
       hearingDate: hearingDate,
