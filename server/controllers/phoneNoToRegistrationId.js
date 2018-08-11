@@ -57,7 +57,7 @@ const bookNow = (req, res, next) => {
   const hearingId = req.body.hearingId;
   const hearingDate = hearingIdToHearing.get(hearingId).Date.split(' ')[0];
   const venue = hearingIdToHearing.get(hearingId).Venue;
-  const partyCount = hearingIdToHearing.get(hearingId).PartiesList.length;
+  const partyCount = hearingIdToHearing.get(hearingId).PartiesList.Party.length;
   console.log('PARTY COUNT: '+partyCount);
 
   //Check if timeslot is already taken on the same day and venue
