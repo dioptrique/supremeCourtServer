@@ -2,6 +2,7 @@ var db = require('../models');
 var Booking = db['Booking'];
 var PhoneNoToRegistrationId = db['PhoneNoToRegistrationId'];
 var uuidv4 = require('uuid/v4');
+var axios = require('axios')
 
 /**
  * @function checkBookingStatus
@@ -67,6 +68,8 @@ const acceptBooking = (req, res) => {
     // party(last acceptor)
     var notifiedParties = booking.acceptedParties.slice();
     notifiedParties.push[booking.bookerNo];
+    console.log('notification parties:')
+    console.log(notifiedParties)
 
     var updatedAcceptedParties = booking.acceptedParties;
     updatedAcceptedParties.push(acceptorNo);
@@ -184,7 +187,8 @@ const rejectBooking = (req, res) => {
   .then((booking) => {
     var notifiedParties = booking.acceptedParties.slice();
     notifiedParties.push[booking.bookerNo];
-
+    console.log('notification parties:')
+    console.log(notifiedParties)
     booking.updateAttributes({
       status: 'rejected'
     })
