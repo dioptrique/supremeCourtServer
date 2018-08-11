@@ -44,7 +44,10 @@ const addNewRegistrationId = (req, res) => {
  * @param {object} res: response object
  * @returns
  */
-// TODO
+// TODO Check if timeslot is already taken by another hearingId on the
+// same day(ongoing or booked)
+// TODO set timer to set booking to expired after X mins
+// TODO get party count from server instead of clients
 const bookNow = (req, res) => {
   const phoneNos = req.body.phoneNos;
   const bookerNo = req.body.bookerNo;
@@ -135,7 +138,7 @@ const bookNow = (req, res) => {
               'to':notification_key,
               'notification': {
                 'title':'SupremeCourt',
-                'body':'Time slot was selected. Press to confirm.',
+                'body':'Time slot '+timeslot+' was selected. Press to confirm.',
                 'click_action':'com.example.skynet.supremecourt_TARGET_NOTIFICATION'
               },
               'data' : {
