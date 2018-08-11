@@ -76,8 +76,7 @@ const getAvailableTimeslots = (req, res) => {
   })
   .then((bookings) => {
     console.log(bookings);
-    var availableTimeslots;
-
+    console.log(bookings.length);
     if(bookings !== null) {
       const reducer = (total,currValue) =>{ total.push(currValue.timeslot); return total; }
       var unavailableTimeslots = bookings.reduce(reducer,[])
