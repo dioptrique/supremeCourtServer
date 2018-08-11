@@ -49,20 +49,37 @@ const addNewRegistrationId = (req, res) => {
 // same day(ongoing or booked)
 // TODO set timer to set booking to expired after X mins
 // TODO get party count from server instead of clients
-const bookNow = (req, res) => {
+const bookNow = (req, res, next) => {
   const phoneNos = req.body.phoneNos;
   const bookerNo = req.body.bookerNo;
   const timeslot = req.body.timeslot;
   const hearingId = req.body.hearingId;
   const partyCount = req.body.partyCount;
-  console.log('Test2 map '+hearingIdToHearing.get('296267').Date)
-  console.log('Test2 hearingId '+hearingId)
   const hearingDate = hearingIdToHearing.get(hearingId).Date.split(' ')[0];
-  console.log('Test2 hearingDate '+hearingDate)
-  console.log('Test2 hearingDate2 '+hearingIdToHearing.get('296157').Date.split(' ')[0])
-  console.log(phoneNos);
-  var registrationIds = []
 
+  //Check if timeslot is already taken another hearing on the same day
+  Booking.find({
+    where: {
+      hearingDate: hearingDate,
+      [Op.and]: {timeslot: timeslot},
+      [Op.and]: {
+        status: 'ongoing',
+        [Op.or]: {status: 'booked'}
+      }
+    }
+  })
+  .then((booking) => {
+    if(booking !== null) {
+      console.log('Time slot is already being booked or is already booked');
+      res.status(200).send({timeslotAvailable: false})
+      next();
+    }
+  })
+  .catch((err) => {
+    console.log()
+  })
+
+  var registrationIds = []
   var promises = []
   // Get the corresponding registrationIds to phoneNos
   phoneNos.forEach((phoneNo) => {
@@ -154,25 +171,30 @@ const bookNow = (req, res) => {
         })
         .then((response) => {
           console.log(response.data)
-          res.status(200).end();
+          res.status(200).send({timeslotAvailable: true});
+          next();
         })
         .catch((err) => {
           console.log(err);
-          res.send(400).end();
+          res.status(400).end();
+          next();
         })
       )
       .catch((err) => {
         console.log(err);
-        res.send(400).end();
+        res.status(400).end();
+        next();
       })
     })
     .catch((err) => {
       console.log(err);
-      res.send(400).end();
+      res.status(400).end();
+      next();
     })})
     .catch((err) => {
       console.log(err);
-      res.send(400).end();
+      res.status(400).end();
+      next();
     })
 }
 module.exports = {

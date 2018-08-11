@@ -6,6 +6,5 @@ rawData.forEach((hearingJson) => {
 })
 
 var hearingIdToHearing = new Map(array)
-console.log('Test map: '+hearingIdToHearing.get('296267').Date)
 
 module.exports = hearingIdToHearing
