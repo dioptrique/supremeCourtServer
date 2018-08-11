@@ -63,13 +63,12 @@ const bookNow = (req, res, next) => {
   //Check if timeslot is already taken on the same day and venue
   Booking.find({
     where: {
-      hearingDate: hearingDate,
-      [Op.and]: {timeslot: timeslot},
-      [Op.and]: {venue: venue},
-      [Op.and]: {
-        status: 'ongoing',
-        [Op.or]: {status: 'booked'}
-      }
+      [Op.and]: [
+        {hearingDate: hearingDate},
+        {timeslot: timeslot},
+        {venue: venue},
+        {[Op.or]: [{status:'ongoing'},{status:'booked'}]}
+      ]
     }
   })
   .then((booking) => {
