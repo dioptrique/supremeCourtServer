@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
       type:DataTypes.STRING,
       allowNull: false
     },
+    venue: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     timeslot: {
       type: DataTypes.STRING,
       allowNull: false

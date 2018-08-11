@@ -130,10 +130,10 @@ const bookNow = (req, res, next) => {
           notificationKey: notification_key,
           pendingParties: partyCount,
           status: 'ongoing',
-          hearingDate: hearingDate
+          hearingDate: hearingDate,
+          venue: venue
         }
       })
-
       .spread((booking, created) => {
         if(!created) {
           // Do not allow user to book if there is already a booked or ongoing
