@@ -3,6 +3,7 @@ var uuidv4 = require('uuid/v4')
 var db = require('../models')
 var PhoneNoToRegistrationId = db["PhoneNoToRegistrationId"];
 var Booking = db['Booking'];
+var hearingIdToHearing = require('../data');
 
 /**
  * @function addNewRegistrationId
@@ -54,6 +55,7 @@ const bookNow = (req, res) => {
   const timeslot = req.body.timeslot;
   const hearingId = req.body.hearingId;
   const partyCount = req.body.partyCount;
+  const hearingDate = hearingIdToHearing.get(hearingId).Date.split(" ")[0];
 
   console.log(phoneNos);
   var registrationIds = []
@@ -98,6 +100,7 @@ const bookNow = (req, res) => {
         // Create new booking row with the following fields
         defaults: {
           hearingId,
+          hearingDate,
           timeslot,
           bookerNo,
           notificationKey: notification_key,
