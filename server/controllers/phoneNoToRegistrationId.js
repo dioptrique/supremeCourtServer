@@ -76,11 +76,10 @@ const bookNow = (req, res, next) => {
     if(booking !== null) {
       console.log('Time slot is already being booked or is already booked');
       res.status(200).send({timeslotAvailable: false})
-      next();
     }
   })
   .catch((err) => {
-    console.log()
+    console.log(err)
   })
 
   //If there is only a single party in the hearing
@@ -97,12 +96,10 @@ const bookNow = (req, res, next) => {
     })
     .then(() => {
       res.status(200).send({timeslotAvailable: true})
-      next();
     })
     .catch((err) => {
       console.log('Single party booking failed');
       res.status(400).end();
-      next();
     })
   } else {
     // If there are other parties that need to accept the booking
@@ -196,29 +193,24 @@ const bookNow = (req, res, next) => {
           .then((response) => {
             console.log(response.data)
             res.status(200).send({timeslotAvailable: true});
-            next();
           })
           .catch((err) => {
             console.log(err);
             res.status(400).end();
-            next();
           })
         )
         .catch((err) => {
           console.log(err);
           res.status(400).end();
-          next();
         })
       })
       .catch((err) => {
         console.log(err);
         res.status(400).end();
-        next();
       })})
       .catch((err) => {
         console.log(err);
         res.status(400).end();
-        next();
       })
   }
 
