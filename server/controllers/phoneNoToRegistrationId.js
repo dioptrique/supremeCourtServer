@@ -58,7 +58,8 @@ const bookNow = (req, res) => {
   console.log('Test2 map '+hearingIdToHearing.get('296267').Date)
   console.log('Test2 hearingId '+hearingId)
   const hearingDate = hearingIdToHearing.get(hearingId).Date.split(' ')[0];
-
+  console.log('Test2 hearingDate '+hearingDate)
+  console.log('Test2 hearingDate2 '+hearingIdToHearing.get('296157').Date.split(' ')[0])
   console.log(phoneNos);
   var registrationIds = []
 
