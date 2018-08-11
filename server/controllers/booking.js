@@ -186,6 +186,7 @@ const rejectBooking = (req, res) => {
   })
   .then((booking) => {
     var notifiedParties = booking.acceptedParties.slice();
+    console.log('Pushing booker no to notification party: '+booking.bookerNo)
     notifiedParties.push[booking.bookerNo];
     console.log('notification parties:')
     console.log(notifiedParties)
