@@ -49,7 +49,7 @@ const addNewRegistrationId = (req, res) => {
  * @returns
  */
 // TODO set timer to set booking to expired after X mins
-// TODO handle single party case differently
+// TODO stop addition of duplicate timeslot date and venue
 const bookNow = (req, res, next) => {
   const phoneNos = req.body.phoneNos;
   const bookerNo = req.body.bookerNo;
@@ -86,6 +86,7 @@ const bookNow = (req, res, next) => {
   })
 
   if(alreadyBooked) {
+    console.log('Already booked '+alreadyBooked);
     return;
   }
   //If there is only a single party in the hearing
