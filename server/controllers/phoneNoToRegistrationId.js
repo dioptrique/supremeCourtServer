@@ -147,6 +147,7 @@ const bookNow = (req, res, next) => {
                     updatedAt: new Date()
                   })
                   .then(() => {
+                    console.log('Setting timer for booking expiry')
                       setTimeout((booking) => {
                         booking.updateAttributes({
                           status: 'expired'
@@ -156,12 +157,13 @@ const bookNow = (req, res, next) => {
                   })
                 }
               } else {
+                console.log('Setting timer for booking expiry')
                 setTimeout((booking) => {
                   booking.updateAttributes({
                     status: 'expired'
                   })
                   console.log('Timeslot booking expired!')
-                },300000)
+                },10000)
               }
             })
             .then(() => {
