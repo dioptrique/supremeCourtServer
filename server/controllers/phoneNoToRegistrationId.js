@@ -74,11 +74,11 @@ const bookNow = (req, res, next) => {
   })
   .then((booking) => {
     console.log('booking on same timeslot,venue and date: ')
-    console.log(booking);
     if(booking !== null) {
       alreadyBooked = true;
       console.log('Time slot is already being booked or is already booked');
       res.status(200).send({timeslotAvailable: false})
+      next();
     }
   })
   .catch((err) => {

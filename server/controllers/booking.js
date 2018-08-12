@@ -75,7 +75,6 @@ const getAvailableTimeslots = (req, res) => {
     }
   })
   .then((bookings) => {
-    console.log(bookings);
     var availableTimeslots = []
     if(bookings !== null) {
       console.log(bookings.length);
