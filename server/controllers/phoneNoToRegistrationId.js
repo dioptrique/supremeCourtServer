@@ -138,7 +138,6 @@ const bookNow = (req, res, next) => {
                   throw new Error('hearing is already being booked or already booked!')
                 } else {
                   // If hearingId already exits and it is 'rejected' or 'expired'
-                  bookingPromise =
                   booking.updateAttributes({
                     timeslot,
                     bookerNo,
@@ -159,9 +158,10 @@ const bookNow = (req, res, next) => {
               } else {
                 console.log('Setting timer for booking expiry')
                 setTimeout((booking) => {
-                  booking.updateAttributes({
-                    status: 'expired'
-                  })
+                  Booking.update(
+                    { status: 'expired'},
+                    {where: { hearingId: hearingId }}
+                  )
                   console.log('Timeslot booking expired!')
                 },10000)
               }
