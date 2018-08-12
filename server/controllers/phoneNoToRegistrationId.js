@@ -58,7 +58,6 @@ const bookNow = (req, res, next) => {
   const hearingDate = hearingIdToHearing.get(hearingId).Date.split(' ')[0];
   const venue = hearingIdToHearing.get(hearingId).Venue;
   const partyCount = hearingIdToHearing.get(hearingId).PartiesList.Party.length;
-  console.log('PARTY COUNT: '+partyCount);
   var alreadyBooked = false;
 
   //Check if timeslot is already taken on the same day and venue
@@ -73,7 +72,6 @@ const bookNow = (req, res, next) => {
     }
   })
   .then((booking) => {
-    console.log('booking on same timeslot,venue and date: ')
     if(booking !== null) {
       alreadyBooked = true;
       console.log('Time slot is already being booked or is already booked');
@@ -84,6 +82,7 @@ const bookNow = (req, res, next) => {
   .catch((err) => {
     console.log(err)
   })
+  console.log('FOUND BOOKED/ONGOING TIMESLOTS');
 
   if(alreadyBooked) {
     console.log('Already booked '+alreadyBooked);
