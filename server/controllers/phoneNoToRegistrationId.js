@@ -152,7 +152,7 @@ const bookNow = (req, res, next) => {
                           status: 'expired'
                         })
                         console.log('Timeslot booking expired!')
-                      },10000)
+                      },300000)
                   })
                 }
               } else {
@@ -163,7 +163,7 @@ const bookNow = (req, res, next) => {
                     {where: { hearingId: hearingId }}
                   )
                   console.log('Timeslot booking expired!')
-                },10000)
+                },300000)
               }
             })
             .then(() => {
