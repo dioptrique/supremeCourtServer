@@ -114,23 +114,6 @@ const bookNow = (req, res, next) => {
         // Create a notification group on FCM once all the corresponding regIds are
         // fetched from db
         Promise.all(promises).then(() => {
-          console.log('RegistrationIds :'+registrationIds)
-          axios({
-            method: 'post',
-            url: 'https://fcm.googleapis.com/fcm/notification',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'key=AAAATBUSzKs:APA91bFDorxTw-AXVrFTGhVEtnobQHRLQ2g8pHJqnw5fDwMiFBKPS6kBgatdWDBdKHwnpszMMxzhltpAvvML97Kn6QXSRTQh5dADQ7EUirzQdxfEHAfhmOu1e0IHc-WrKroIOi7Xz6K4c2PUP1gq_El75ppfIHepXw',
-              'project_id':'326771068075'
-            },
-            data: {
-              'operation': 'create',
-              'notification_key_name': uuidv4(),
-              'registration_ids': registrationIds
-            }
-          })
-          .then((response) => {
-            var notification_key = response.data.notification_key;
             // Create a new booking for hearingId if hearingId does not exist.
             // If hearingId exists then replace the remaining fields with the
             // new booking information
@@ -155,6 +138,7 @@ const bookNow = (req, res, next) => {
                   throw new Error('hearing is already being booked or already booked!')
                 } else {
                   // If hearingId already exits and it is 'rejected' or 'expired'
+                  bookingPromise =
                   booking.updateAttributes({
                     timeslot,
                     bookerNo,
@@ -162,19 +146,51 @@ const bookNow = (req, res, next) => {
                     status: 'ongoing',
                     updatedAt: new Date()
                   })
+                  .then(() => {
+                      setTimeout((booking) => {
+                        booking.updateAttributes({
+                          status: 'expired'
+                        })
+                        console.log('Timeslot booking expired!')
+                      },10000)
+                  })
                 }
+              } else {
+                setTimeout((booking) => {
+                  booking.updateAttributes({
+                    status: 'expired'
+                  })
+                  console.log('Timeslot booking expired!')
+                },300000)
               }
             })
-            .then(() =>
-              // Send message to group members
+            .then(() => {
+              console.log('RegistrationIds :'+registrationIds)
               axios({
                 method: 'post',
-                url: 'https://fcm.googleapis.com/fcm/send',
+                url: 'https://fcm.googleapis.com/fcm/notification',
                 headers: {
                   'Content-Type': 'application/json',
-                  'Authorization': 'key=AAAATBUSzKs:APA91bFDorxTw-AXVrFTGhVEtnobQHRLQ2g8pHJqnw5fDwMiFBKPS6kBgatdWDBdKHwnpszMMxzhltpAvvML97Kn6QXSRTQh5dADQ7EUirzQdxfEHAfhmOu1e0IHc-WrKroIOi7Xz6K4c2PUP1gq_El75ppfIHepXw'
+                  'Authorization': 'key=AAAATBUSzKs:APA91bFDorxTw-AXVrFTGhVEtnobQHRLQ2g8pHJqnw5fDwMiFBKPS6kBgatdWDBdKHwnpszMMxzhltpAvvML97Kn6QXSRTQh5dADQ7EUirzQdxfEHAfhmOu1e0IHc-WrKroIOi7Xz6K4c2PUP1gq_El75ppfIHepXw',
+                  'project_id':'326771068075'
                 },
                 data: {
+                  'operation': 'create',
+                  'notification_key_name': uuidv4(),
+                  'registration_ids': registrationIds
+                }
+              })
+              .then((response) => {
+                var notification_key = response.data.notification_key;
+                // Send message to group members
+                axios({
+                  method: 'post',
+                  url: 'https://fcm.googleapis.com/fcm/send',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'key=AAAATBUSzKs:APA91bFDorxTw-AXVrFTGhVEtnobQHRLQ2g8pHJqnw5fDwMiFBKPS6kBgatdWDBdKHwnpszMMxzhltpAvvML97Kn6QXSRTQh5dADQ7EUirzQdxfEHAfhmOu1e0IHc-WrKroIOi7Xz6K4c2PUP1gq_El75ppfIHepXw'
+                  },
+                  data: {
                     'to':notification_key,
                     'notification': {
                       'title':'SupremeCourt',
@@ -185,25 +201,26 @@ const bookNow = (req, res, next) => {
                       'hearingId' : hearingId
                     }
                   }
-              })
-              .then((response) => {
-                console.log(response.data)
-                res.status(200).send({timeslotAvailable: true});
+                })
+                .then((response) => {
+                  console.log(response.data)
+                  res.status(200).send({timeslotAvailable: true});
+                })
+                .catch((err) => {
+                  console.log(err);
+                  res.status(400).end();
+                })
               })
               .catch((err) => {
                 console.log(err);
                 res.status(400).end();
               })
-            )
+            })
             .catch((err) => {
               console.log(err);
               res.status(400).end();
             })
           })
-          .catch((err) => {
-            console.log(err);
-            res.status(400).end();
-          })})
           .catch((err) => {
             console.log(err);
             res.status(400).end();
@@ -214,10 +231,6 @@ const bookNow = (req, res, next) => {
   .catch((err) => {
     console.log(err)
   })
-
-
-
-
 }
 module.exports = {
   addNewRegistrationId : addNewRegistrationId,
