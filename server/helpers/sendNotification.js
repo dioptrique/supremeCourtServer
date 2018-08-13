@@ -48,11 +48,13 @@ module.exports = sendNotification = (registrationIds, message) => {
        }
      })
      .catch((err) => {
+       console.log(err)
        console.log('Unable to sent notification to device groups')
        throw err;
      })
    })
    .catch((err) => {
+     console.log(err)
      console.log('Unable to get notification key')
      throw err;
    })
