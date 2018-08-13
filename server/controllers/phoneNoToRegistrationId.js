@@ -156,7 +156,7 @@ const bookNow = (req, res, next) => {
                           PhoneNoToRegistrationId
                           .find({where:{phoneNo: bookerNo}})
                           .then((booker) => {
-                            console.log(registrationIdsssss)
+                            console.log('registrationIdsssss')
                             console.log(registrationIds)
                             var allParties = registrationIds.splice()
                             allParties.push(booker.registrationId);
@@ -171,7 +171,7 @@ const bookNow = (req, res, next) => {
                                               })
                           })
                           .catch((err) => {
-                            console.log('Error in finding bookerNo regId')
+                            console.log(err)
                             res.status(400).end();
                           })
                         })
@@ -190,7 +190,7 @@ const bookNow = (req, res, next) => {
                     PhoneNoToRegistrationId
                     .find({where:{phoneNo: bookerNo}})
                     .then((booker) => {
-                      console.log(registrationIdsssss)
+                      console.log('registrationIdsssss')
                       console.log(registrationIds)
                       var allParties = registrationIds.splice()
                       allParties.push(booker.registrationId);
@@ -205,7 +205,7 @@ const bookNow = (req, res, next) => {
                                         })
                     })
                     .catch((err) => {
-                      console.log('Error in finding bookerNo regId')
+                      console.log(err)
                       res.status(400).end();
                     })
                   })
