@@ -148,7 +148,7 @@ const bookNow = (req, res, next) => {
                   })
                   .then(() => {
                     console.log('Setting timer for booking expiry')
-                      setTimeout((booking) => {
+                      setTimeout(() => {
                         booking.updateAttributes({
                           status: 'expired'
                         })
@@ -181,7 +181,7 @@ const bookNow = (req, res, next) => {
                 }
               } else { // If a new entry was created
                 console.log('Setting timer for booking expiry')
-                setTimeout((booking) => {
+                setTimeout(() => {
                   Booking.update(
                     { status: 'expired'},
                     {where: { hearingId: hearingId }}
