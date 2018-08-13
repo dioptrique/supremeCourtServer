@@ -162,7 +162,7 @@ const bookNow = (req, res, next) => {
                     { status: 'expired'},
                     {where: { hearingId: hearingId }}
                   )
-                  console.log('Timeslot booking expired!')
+                  console.log('Timeslot booking expired!!')
                 },300000)
               }
             })
