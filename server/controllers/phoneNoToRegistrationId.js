@@ -156,7 +156,8 @@ const bookNow = (req, res, next) => {
                           PhoneNoToRegistrationId
                           .find({where:{phoneNo: bookerNo}})
                           .then((booker) => {
-                            var allParties = registrationIds.splice().push(booker.registrationId);
+                            var allParties = registrationIds.splice()
+                            allParties.push(booker.registrationId);
                             console.log('allParties')
                             console.log(allParties);
                             sendNotification(allParties,
@@ -187,7 +188,8 @@ const bookNow = (req, res, next) => {
                     PhoneNoToRegistrationId
                     .find({where:{phoneNo: bookerNo}})
                     .then((booker) => {
-                      var allParties = registrationIds.splice().push(booker.registrationId);
+                      var allParties = registrationIds.splice()
+                      allParties.push(booker.registrationId);
                       console.log('allParties')
                       console.log(allParties);
                       sendNotification(allParties,
