@@ -83,6 +83,7 @@ const bookNow = (req, res, next) => {
       if(partyCount === 1) {
         console.log('PARTY COUNT IS 1');
         Booking.create({
+          bookingId: uuidv4(),
           hearingId: hearingId,
           hearingDate: hearingDate,
           venue: venue,
@@ -117,11 +118,14 @@ const bookNow = (req, res, next) => {
         Promise.all(promises).then(() => {
             // Create a new booking for hearingId if hearingId does not exist.
             // If hearingId exists then replace the remaining fields with the
-            // new booking information
+            // new booking information. A newly ongoing booking will have a
+            // new and unique bookingId
+            var bookingId = uuidv4();
             Booking.findOrCreate({
               where: {hearingId: hearingId},
               // Create new booking row with the following fields
               defaults: {
+                bookingId,
                 hearingId,
                 timeslot,
                 bookerNo,
@@ -140,6 +144,7 @@ const bookNow = (req, res, next) => {
                 } else {
                   // If hearingId already exits and it is 'rejected' or 'expired'
                   booking.updateAttributes({
+                    bookingId,
                     timeslot,
                     bookerNo,
                     pendingParties: partyCount - 1,
@@ -149,65 +154,86 @@ const bookNow = (req, res, next) => {
                   .then(() => {
                     console.log('Setting timer for booking expiry')
                       setTimeout(() => {
-                        booking.updateAttributes({
-                          status: 'expired'
+                        Booking
+                        .find({ where: {hearingId: hearingId} })
+                        .then((booking) => {
+                          // If the same booking is still ongoing since X mins ago, it becomes expired
+                          if(booking.bookingId === bookingId && booking.status === 'ongoing') {
+                            booking.updateAttributes({
+                              status: 'expired'
+                            })
+                            .then(() => {
+                              PhoneNoToRegistrationId
+                              .find({where:{phoneNo: bookerNo}})
+                              .then((booker) => {
+                                console.log('registrationIdsssss')
+                                console.log(registrationIds)
+                                var allParties = registrationIds.slice()
+                                allParties.push(booker.registrationId);
+                                console.log('allParties')
+                                console.log(allParties);
+                                sendNotification(hearingId,allParties,
+                                                  'Ongoing booking has expired while waiting for all parties to accept. Press to book again.')
+                                                  .catch((err) => {
+                                                    console.log('Unable to send notification about expiry')
+                                                    res.status(400).end();
+                                                  })
+                              })
+                              .catch((err) => {
+                                console.log(err)
+                                res.status(400).end();
+                              })
+                            })
+                            console.log('Timeslot booking expired!')
+                          }
                         })
-                        .then(() => {
-                          PhoneNoToRegistrationId
-                          .find({where:{phoneNo: bookerNo}})
-                          .then((booker) => {
-                            console.log('registrationIdsssss')
-                            console.log(registrationIds)
-                            var allParties = registrationIds.slice()
-                            allParties.push(booker.registrationId);
-                            console.log('allParties')
-                            console.log(allParties);
-                            sendNotification(hearingId,allParties,
-                                              'Ongoing booking has expired while waiting for all parties to accept. Press to book again.')
-                                              .catch((err) => {
-                                                console.log('Unable to send notification about expiry')
-                                                res.status(400).end();
-                                              })
-                          })
-                          .catch((err) => {
-                            console.log(err)
-                            res.status(400).end();
-                          })
+                        .catch((err) => {
+                          console.log(err);
+                          res.status(400).end();
                         })
-                        console.log('Timeslot booking expired!')
                       },15000)
                   })
                 }
               } else { // If a new entry was created
                 console.log('Setting timer for booking expiry')
                 setTimeout(() => {
-                  Booking.update(
-                    { status: 'expired'},
-                    {where: { hearingId: hearingId }}
-                  )
-                  .then(() => {
-                    PhoneNoToRegistrationId
-                    .find({where:{phoneNo: bookerNo}})
-                    .then((booker) => {
-                      console.log('registrationIdsssss')
-                      console.log(registrationIds)
-                      var allParties = registrationIds.slice()
-                      allParties.push(booker.registrationId);
-                      console.log('allParties')
-                      console.log(allParties);
-                      sendNotification(hearingId,allParties,
-                                        'Ongoing booking has expired while waiting for all parties to accept. Press to book again.')
-                                        .catch((err) => {
-                                          console.log('Unable to send notification about expiry')
-                                          res.status(400).end();
-                                        })
-                    })
-                    .catch((err) => {
-                      console.log(err)
-                      res.status(400).end();
-                    })
+                  Booking
+                  .find({ where: {hearingId: hearingId} })
+                  .then((booking) => {
+                    // If the same booking is still ongoing since X mins ago, it becomes expired
+                    if(booking.bookingId === bookingId && booking.status === 'ongoing') {
+                      booking.updateAttributes({
+                        status: 'expired'
+                      })
+                      .then(() => {
+                        PhoneNoToRegistrationId
+                        .find({where:{phoneNo: bookerNo}})
+                        .then((booker) => {
+                          console.log('registrationIdsssss')
+                          console.log(registrationIds)
+                          var allParties = registrationIds.slice()
+                          allParties.push(booker.registrationId);
+                          console.log('allParties')
+                          console.log(allParties);
+                          sendNotification(hearingId,allParties,
+                                            'Ongoing booking has expired while waiting for all parties to accept. Press to book again.')
+                                            .catch((err) => {
+                                              console.log('Unable to send notification about expiry')
+                                              res.status(400).end();
+                                            })
+                        })
+                        .catch((err) => {
+                          console.log(err)
+                          res.status(400).end();
+                        })
+                      })
+                      console.log('Timeslot booking expired!')
+                    }
                   })
-                  console.log('Timeslot booking expired!!')
+                  .catch((err) => {
+                    console.log(err);
+                    res.status(400).end();
+                  })
                 },15000)
               }
             })

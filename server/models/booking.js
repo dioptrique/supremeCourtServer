@@ -12,6 +12,11 @@ module.exports = (sequelize, DataTypes) => {
       type:DataTypes.STRING,
       allowNull: false
     },
+    bookingId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true
+    },
     venue: {
       type: DataTypes.STRING,
       allowNull: false
