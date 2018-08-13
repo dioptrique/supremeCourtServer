@@ -156,6 +156,8 @@ const bookNow = (req, res, next) => {
                           PhoneNoToRegistrationId
                           .find({where:{phoneNo: bookerNo}})
                           .then((booker) => {
+                            console.log(registrationIdsssss)
+                            console.log(registrationIds)
                             var allParties = registrationIds.splice()
                             allParties.push(booker.registrationId);
                             console.log('allParties')
@@ -174,7 +176,7 @@ const bookNow = (req, res, next) => {
                           })
                         })
                         console.log('Timeslot booking expired!')
-                      },5000)
+                      },15000)
                   })
                 }
               } else { // If a new entry was created
@@ -188,6 +190,8 @@ const bookNow = (req, res, next) => {
                     PhoneNoToRegistrationId
                     .find({where:{phoneNo: bookerNo}})
                     .then((booker) => {
+                      console.log(registrationIdsssss)
+                      console.log(registrationIds)
                       var allParties = registrationIds.splice()
                       allParties.push(booker.registrationId);
                       console.log('allParties')
@@ -206,7 +210,7 @@ const bookNow = (req, res, next) => {
                     })
                   })
                   console.log('Timeslot booking expired!!')
-                },5000)
+                },15000)
               }
             })
             .then(() => {
