@@ -5,6 +5,7 @@ var PhoneNoToRegistrationId = db["PhoneNoToRegistrationId"];
 var Booking = db['Booking'];
 var hearingIdToHearing = require('../data');
 var Sequelize = require('sequelize')
+var sendNotification = require('../helpers/sendNotification')
 
 const Op = Sequelize.Op;
 
@@ -151,8 +152,26 @@ const bookNow = (req, res, next) => {
                         booking.updateAttributes({
                           status: 'expired'
                         })
+                        .then(() => {
+                          PhoneNoToRegistrationId
+                          .findOne({where:{phoneNo: bookerNo}})
+                          .then((bookerRegistrationId) => {
+                            var allParties = registrationIds.splice().push(bookerRegistrationId);
+                            sendNotification(allParties,
+                                              'Ongoing booking has expired while waiting for all parties to accept. \
+                                              Press to book again.')
+                                              .catch((err) => {
+                                                console.log('Unable to send notification about expiry')
+                                                res.status(400).end();
+                                              })
+                          })
+                          .catch((err) => {
+                            console.log('Error in finding bookerNo regId')
+                            res.status(400).end();
+                          })
+                        })
                         console.log('Timeslot booking expired!')
-                      },300000)
+                      },5000)
                   })
                 }
               } else {
@@ -162,8 +181,26 @@ const bookNow = (req, res, next) => {
                     { status: 'expired'},
                     {where: { hearingId: hearingId }}
                   )
+                  .then(() => {
+                    PhoneNoToRegistrationId
+                    .findOne({where:{phoneNo: bookerNo}})
+                    .then((bookerRegistrationId) => {
+                      var allParties = registrationIds.splice().push(bookerRegistrationId);
+                      sendNotification(allParties,
+                                        'Ongoing booking has expired while waiting for all parties to accept. \
+                                        Press to book again.')
+                                        .catch((err) => {
+                                          console.log('Unable to send notification about expiry')
+                                          res.status(400).end();
+                                        })
+                    })
+                    .catch((err) => {
+                      console.log('Error in finding bookerNo regId')
+                      res.status(400).end();
+                    })
+                  })
                   console.log('Timeslot booking expired!!')
-                },300000)
+                },5000)
               }
             })
             .then(() => {
