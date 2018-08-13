@@ -9,7 +9,7 @@ var uuidv4 = require('uuid/v4')
  * @returns Promise
  */
 
-module.exports = sendNotification = (registrationIds, message) => {
+module.exports = sendNotification = (hearingId, registrationIds, message) => {
    console.log('RegistrationIds :'+registrationIds)
    return axios({
      method: 'post',

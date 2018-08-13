@@ -162,7 +162,7 @@ const bookNow = (req, res, next) => {
                             allParties.push(booker.registrationId);
                             console.log('allParties')
                             console.log(allParties);
-                            sendNotification(allParties,
+                            sendNotification(hearingId,allParties,
                                               'Ongoing booking has expired while waiting for all parties to accept. \
                                               Press to book again.')
                                               .catch((err) => {
@@ -196,7 +196,7 @@ const bookNow = (req, res, next) => {
                       allParties.push(booker.registrationId);
                       console.log('allParties')
                       console.log(allParties);
-                      sendNotification(allParties,
+                      sendNotification(hearingId,allParties,
                                         'Ongoing booking has expired while waiting for all parties to accept. \
                                         Press to book again.')
                                         .catch((err) => {
