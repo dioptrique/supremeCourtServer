@@ -154,9 +154,11 @@ const bookNow = (req, res, next) => {
                         })
                         .then(() => {
                           PhoneNoToRegistrationId
-                          .findOne({where:{phoneNo: bookerNo}})
-                          .then((bookerRegistrationId) => {
-                            var allParties = registrationIds.splice().push(bookerRegistrationId);
+                          .find({where:{phoneNo: bookerNo}})
+                          .then((booker) => {
+                            var allParties = registrationIds.splice().push(booker.registrationId);
+                            console.log('allParties')
+                            console.log(allParties);
                             sendNotification(allParties,
                                               'Ongoing booking has expired while waiting for all parties to accept. \
                                               Press to book again.')
@@ -174,7 +176,7 @@ const bookNow = (req, res, next) => {
                       },5000)
                   })
                 }
-              } else {
+              } else { // If a new entry was created
                 console.log('Setting timer for booking expiry')
                 setTimeout((booking) => {
                   Booking.update(
@@ -183,9 +185,11 @@ const bookNow = (req, res, next) => {
                   )
                   .then(() => {
                     PhoneNoToRegistrationId
-                    .findOne({where:{phoneNo: bookerNo}})
-                    .then((bookerRegistrationId) => {
-                      var allParties = registrationIds.splice().push(bookerRegistrationId);
+                    .find({where:{phoneNo: bookerNo}})
+                    .then((booker) => {
+                      var allParties = registrationIds.splice().push(booker.registrationId);
+                      console.log('allParties')
+                      console.log(allParties);
                       sendNotification(allParties,
                                         'Ongoing booking has expired while waiting for all parties to accept. \
                                         Press to book again.')
