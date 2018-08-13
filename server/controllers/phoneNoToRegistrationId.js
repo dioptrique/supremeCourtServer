@@ -163,8 +163,7 @@ const bookNow = (req, res, next) => {
                             console.log('allParties')
                             console.log(allParties);
                             sendNotification(hearingId,allParties,
-                                              'Ongoing booking has expired while waiting for all parties to accept. \
-                                              Press to book again.')
+                                              'Ongoing booking has expired while waiting for all parties to accept. Press to book again.')
                                               .catch((err) => {
                                                 console.log('Unable to send notification about expiry')
                                                 res.status(400).end();
@@ -197,8 +196,7 @@ const bookNow = (req, res, next) => {
                       console.log('allParties')
                       console.log(allParties);
                       sendNotification(hearingId,allParties,
-                                        'Ongoing booking has expired while waiting for all parties to accept. \
-                                        Press to book again.')
+                                        'Ongoing booking has expired while waiting for all parties to accept. Press to book again.')
                                         .catch((err) => {
                                           console.log('Unable to send notification about expiry')
                                           res.status(400).end();
