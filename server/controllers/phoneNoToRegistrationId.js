@@ -158,7 +158,7 @@ const bookNow = (req, res, next) => {
                           .then((booker) => {
                             console.log('registrationIdsssss')
                             console.log(registrationIds)
-                            var allParties = registrationIds.splice()
+                            var allParties = registrationIds.slice()
                             allParties.push(booker.registrationId);
                             console.log('allParties')
                             console.log(allParties);
@@ -192,7 +192,7 @@ const bookNow = (req, res, next) => {
                     .then((booker) => {
                       console.log('registrationIdsssss')
                       console.log(registrationIds)
-                      var allParties = registrationIds.splice()
+                      var allParties = registrationIds.slice()
                       allParties.push(booker.registrationId);
                       console.log('allParties')
                       console.log(allParties);
