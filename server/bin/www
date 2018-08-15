@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 
 var app = require('../app');
 
-const port = parseInt(process.env.PORT, 10) || 3000;
+const port = parseInt(process.env.PORT, 10) || 3500;
 app.set('port', port);
 
 if(process.env.NODE_ENV !== 'production') {

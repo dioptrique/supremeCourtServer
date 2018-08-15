@@ -1,5 +1,6 @@
 var phoneNoToRegistrationIdController = require('../controllers/phoneNoToRegistrationId')
 var bookingController = require('../controllers/booking')
+var dataController = require('../controllers/data')
 
 module.exports = (app) => {
   welcome = {
@@ -9,6 +10,11 @@ module.exports = (app) => {
   app.get('/', function(req, res) {
     res.status(200).send(welcome);
   });
+  app.get('/getLawFirms', dataController.getLawFirms);
+
+  app.post('/getLawFirmHearings',dataController.getLawFirmHearings);
+
+  app.post('/getHearing', dataController.getHearing)
 
   app.post('/addNewRegistrationId', phoneNoToRegistrationIdController.addNewRegistrationId);
 
@@ -21,4 +27,5 @@ module.exports = (app) => {
   app.post('/rejectBooking', bookingController.rejectBooking);
 
   app.post('/getAvailableTimeSlots', bookingController.getAvailableTimeslots);
+
 }
