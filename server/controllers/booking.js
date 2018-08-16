@@ -7,7 +7,7 @@ var hearingIdToHearing = require('../data');
 var Sequelize = require('sequelize')
 var currDate = require('../helpers/timeAndDate').currDate
 var makeDate = require('../helpers/timeAndDate').makeDate
-var Date = require('../data')
+var Data = require('../data')
 
 const Op = Sequelize.Op;
 
