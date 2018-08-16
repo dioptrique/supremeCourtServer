@@ -79,7 +79,10 @@ const getHearingsInWindow = (lawFirm) => {
     hearings.push(getHearing(hearingId))
   })
   console.log(hearings)
-  var hearingsInWindow = hearings.filter((hearing) => new Date(hearing.Date).getTime() < windowEnd.getTime());
+  var hearingsInWindow = hearings.filter((hearing) => {
+    new Date(hearing.Date).getTime() < windowEnd.getTime() &&
+    new Date(hearing.Date).getTime() > Data.currDate().getTime()
+  });
   // Group hearings by date
   return d3.nest().key(d => d.Date.split(" ")[0])
                   .sortKeys((a,b) => Date.parse(a) - Date.parse(b))
