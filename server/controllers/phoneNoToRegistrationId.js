@@ -6,6 +6,8 @@ var Booking = db['Booking'];
 var hearingIdToHearing = require('../data');
 var Sequelize = require('sequelize')
 var sendNotification = require('../helpers/sendNotification')
+var TimeAndDate = require('../helpers/timeAndDate')
+var Data = require('../data')
 
 const Op = Sequelize.Op;
 
@@ -56,11 +58,19 @@ const bookNow = (req, res, next) => {
   const bookerNo = req.body.bookerNo;
   const timeslot = req.body.timeslot;
   const hearingId = req.body.hearingId;
-  const hearingDate = hearingIdToHearing.get(hearingId).Date.split(' ')[0];
-  const venue = hearingIdToHearing.get(hearingId).Venue;
-  const partyCount = hearingIdToHearing.get(hearingId).PartiesList.Party.length;
+  const hearingObj = Data.getHearing(hearingId);
+  const hearingDate = hearingObj.Date.split(' ')[0];
+  const venue = hearingObj.Venue;
+  const partyCount = hearingObj.Parties.length;
   var alreadyBooked = false;
-
+  const currTime = TimeAndDate.currDate();
+  if(currTime.getTime() > TimeAndDate.makeDate(hearingDate,timeslot)) {
+    res.status(200).send({
+      bookingStatus:'unsuccessful',
+      reason:'outdated'
+    })
+    return;
+  }
   //Check if timeslot is already taken on the same day and venue
   Booking.find({
     where: {
@@ -77,7 +87,10 @@ const bookNow = (req, res, next) => {
     if(booking !== null) {
       alreadyBooked = true;
       console.log('Time slot is already being booked or is already booked');
-      res.status(200).send({timeslotAvailable: false})
+      res.status(200).send({
+        bookingStatus:'unsuccessful',
+        reason:'taken'
+      })
     } else {
       //If there is only a single party in the hearing
       if(partyCount === 1) {
@@ -93,7 +106,9 @@ const bookNow = (req, res, next) => {
           pendingParties: 0
         })
         .then(() => {
-          res.status(200).send({timeslotAvailable: true})
+          res.status(200).send({
+            bookingStatus:'successful'
+          })
         })
         .catch((err) => {
           console.log('Single party booking failed');
@@ -277,7 +292,9 @@ const bookNow = (req, res, next) => {
                 })
                 .then((response) => {
                   console.log(response.data)
-                  res.status(200).send({timeslotAvailable: true});
+                  res.status(200).send({
+                    bookingStatus:'successful'
+                  });
                 })
                 .catch((err) => {
                   console.log(err);
