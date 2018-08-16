@@ -12,6 +12,7 @@ rawData.forEach((hearing) => {
 const hearingIdToHearing = new Map(array)
 
 console.log(TimeAndDate.currDate())
+
 const getHearing = (hearingId) => {
   var oldHearing = hearingIdToHearing.get(hearingId);
   // Create a new hearing object that only stores the essentials
@@ -66,9 +67,8 @@ const lawFirms = Array.from(lawFirmToHearingId.keys());
  * @function getHearingsInWindow
  * @summary: Get the hearings in the time window set as Constant for a
  * particular lawfirm.
- * @param {object} req: request object
- * @param {object} res: response object
- * @returns
+ * @param {string} lawFirm the name of the law firm to get the hearings for
+ * @returns JSON object of hearings
  */
 const getHearingsInWindow = (lawFirm) => {
   var windowEnd = new Date(new Date((TimeAndDate.currDate().getTime() + Constants.WINDOW)).toDateString());
@@ -81,7 +81,7 @@ const getHearingsInWindow = (lawFirm) => {
   console.log(hearings)
   var hearingsInWindow = hearings.filter((hearing) => {
     new Date(hearing.Date).getTime() < windowEnd.getTime() &&
-    new Date(hearing.Date).getTime() > Data.currDate().getTime()
+    new Date(hearing.Date).getTime() > TimeAndDate.currDate().getTime()
   });
   // Group hearings by date
   return d3.nest().key(d => d.Date.split(" ")[0])
