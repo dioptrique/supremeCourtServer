@@ -5,8 +5,7 @@ var uuidv4 = require('uuid/v4');
 var axios = require('axios');
 var hearingIdToHearing = require('../data');
 var Sequelize = require('sequelize')
-var currDate = require('../helpers/timeAndDate').currDate
-var makeDate = require('../helpers/timeAndDate').makeDate
+var TimeAndDate = require('../helpers/timeAndDate')
 var Data = require('../data')
 
 const Op = Sequelize.Op;
@@ -63,7 +62,7 @@ const getAvailableTimeslots = (req, res) => {
   const hearing = Data.getHearing(hearingId);
   const hearingDate = hearing.Date.split(' ')[0];
   const givenHearingTime = hearing.Date.split(' ')[1];
-  const givenHearingDateObj = makeDate(hearingDate,givenHearingTime);
+  const givenHearingDateObj = TimeAndDate.makeDate(hearingDate,givenHearingTime);
   const venue = hearing.Venue;
   var allTimeslots = ["09:00","09:30","10:00",
       "10:30","11:00","11:30",
@@ -71,7 +70,7 @@ const getAvailableTimeslots = (req, res) => {
       "15:30","16:00","16:30",
       "17:00","17:30"]
 
-  const currDate = currDate()
+  const currDate = TimeAndDate.currDate()
   Booking.findAll({
     // Get all the bookings on the same day and venue
     where: {
