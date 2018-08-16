@@ -62,8 +62,17 @@ rawData.forEach((hearing) => {
 
 const lawFirms = Array.from(lawFirmToHearingId.keys());
 
+/**
+ * @function getHearingsInWindow
+ * @summary: Get the hearings in the time window set as Constant for a
+ * particular lawfirm.
+ * @param {object} req: request object
+ * @param {object} res: response object
+ * @returns
+ */
 const getHearingsInWindow = (lawFirm) => {
   var windowEnd = new Date(new Date((TimeAndDate.currDate().getTime() + Constants.WINDOW)).toDateString());
+  console.log(windowEnd);
   var hearingIds = Array.from(lawFirmToHearingId.get(lawFirm))
   hearings = []
   hearingIds.forEach((hearingId) => {
