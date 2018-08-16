@@ -89,7 +89,7 @@ const getAvailableTimeslots = (req, res) => {
       var unavailableTimeslots = bookings.reduce(reducer,[])
       // Remove the timeslots already booked and the time slots before current time
       availableTimeslots = allTimeslots.filter(timeslot => !(unavailableTimeslots.includes(timeslot)))
-                                       //.filter(timeslot => (currDate.getTime() < makeDate(hearingDate,timeslot)))
+                                       .filter(timeslot => (currDate.getTime() < TimeAndDate.makeDate(hearingDate,timeslot)))
     } else {
       availableTimeslots = allTimeslots;
     }

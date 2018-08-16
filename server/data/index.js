@@ -65,20 +65,24 @@ const lawFirms = Array.from(lawFirmToHearingId.keys());
 
 /**
  * @function getHearingsInWindow
- * @summary: Get the hearings in the time window set as Constant for a
- * particular lawfirm.
+ * @summary: Get the hearings which can be booked in advance. The hearings
+ * that may be booked will only be the hearings in the window
  * @param {string} lawFirm the name of the law firm to get the hearings for
  * @returns JSON object of hearings
  */
 const getHearingsInWindow = (lawFirm) => {
   var windowEnd = new Date(new Date((TimeAndDate.currDate().getTime() + Constants.WINDOW)).toDateString());
+  console.log("End of window for booking in advance: ")
   console.log(windowEnd);
   var hearingIds = Array.from(lawFirmToHearingId.get(lawFirm))
   hearings = []
   hearingIds.forEach((hearingId) => {
     hearings.push(getHearing(hearingId))
   })
+  console.log("All hearings for this lawfirm: ")
   console.log(hearings)
+  // The hearings before the window end and including and after today will
+  // be selected 
   var hearingsInWindow = hearings.filter((hearing) =>
     new Date(new Date(hearing.Date).toDateString()).getTime() < windowEnd.getTime() &&
     new Date(new Date(hearing.Date).toDateString()).getTime() >= new Date(TimeAndDate.currDate().toDateString()).getTime());
