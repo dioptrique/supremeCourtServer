@@ -165,7 +165,7 @@ const acceptBooking = (req, res) => {
             sendSMS(notifiedParties,'Hearing'+hearingId+'was confirmed\
              at '+booking.timeslot+'.\
              Visit the hearing page on the application to confirm within 5 minutes.')
-            .then(() => res.status(200).end();)
+            .then(() => res.status(200).end())
             .catch((err) => {
               console.log(err);
             })
