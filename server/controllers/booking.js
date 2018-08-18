@@ -131,7 +131,8 @@ const acceptBooking = (req, res) => {
     var updatedAcceptedParties = booking.acceptedParties;
     updatedAcceptedParties.push(acceptorNo);
 
-    // This is the last party to accept the booking request
+    // This is the last party to accept the booking request. This means that
+    // The booking will be made at this slot
     if(booking.pendingParties === 1) {
       booking.updateAttributes({
         pendingParties: 0,
@@ -164,6 +165,7 @@ const acceptBooking = (req, res) => {
             sendSMS(notifiedParties,'Hearing'+hearingId+'was confirmed\
              at '+booking.timeslot+'.\
              Visit the hearing page on the application to confirm within 5 minutes.')
+            .then(() => res.status(200).end();)
             .catch((err) => {
               console.log(err);
             })
