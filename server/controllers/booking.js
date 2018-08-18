@@ -157,12 +157,13 @@ const acceptBooking = (req, res) => {
         // fetched from db
         Promise.all(promises).then(() => {
           console.log('RegistrationIds :'+registrationIds)
-          sendNotification(hearingId,registrationIds,'Hearing'+hearingId+'was confirmed\
+          sendNotification(hearingId,registrationIds,'Hearing '+hearingId+' was confirmed\
            at '+booking.timeslot+'.\
            Press to visit the hearing page on the application to confirm within 5 minutes.')
           .then(() => {
             console.log('NOTIFICATION SENT')
-            sendSMS(notifiedParties,'Hearing'+hearingId+'was confirmed\
+            console.log(notifiedParties);
+            sendSMS(notifiedParties,'Hearing '+hearingId+' was confirmed\
              at '+booking.timeslot+'.\
              Visit the hearing page on the application to confirm within 5 minutes.')
             .then(() => res.status(200).end())

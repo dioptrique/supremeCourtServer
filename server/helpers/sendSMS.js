@@ -15,6 +15,8 @@ module.exports = sendSMS = (phoneNos, message) => {
     phoneNosInUrl.concat('65'+phoneNo+';');
   })
   phoneNosInUrl = phoneNosInUrl.slice(0,-1)
+  console.log('PHONENOSINURL:')
+  console.log(phoneNosInUrl)
   const url = 'https://www.isms.com.my/isms_send.php?un='+ISMS_USER+'&pwd='+ISMS_PWD+'&dstno='+phoneNosInUrl+'&msg='+message+'&type=1&sendid=12345678'
   return axios({
     method: 'get',
