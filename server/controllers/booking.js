@@ -7,6 +7,8 @@ var hearingIdToHearing = require('../data');
 var Sequelize = require('sequelize')
 var TimeAndDate = require('../helpers/timeAndDate')
 var Data = require('../data')
+var sendNotification = require('../helpers/sendNotification')
+var sendSMS = require('../helpers/sendSMS')
 
 const Op = Sequelize.Op;
 
@@ -154,50 +156,23 @@ const acceptBooking = (req, res) => {
         // fetched from db
         Promise.all(promises).then(() => {
           console.log('RegistrationIds :'+registrationIds)
-          axios({
-            method: 'post',
-            url: 'https://fcm.googleapis.com/fcm/notification',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'key=AAAATBUSzKs:APA91bFDorxTw-AXVrFTGhVEtnobQHRLQ2g8pHJqnw5fDwMiFBKPS6kBgatdWDBdKHwnpszMMxzhltpAvvML97Kn6QXSRTQh5dADQ7EUirzQdxfEHAfhmOu1e0IHc-WrKroIOi7Xz6K4c2PUP1gq_El75ppfIHepXw',
-              'project_id':'326771068075'
-            },
-            data: {
-              'operation': 'create',
-              'notification_key_name': uuidv4(),
-              'registration_ids': registrationIds
-            }
-          })
-          .then((response) => {
-              var notification_key = response.data.notification_key;
-              axios({
-                method: 'post',
-                url: 'https://fcm.googleapis.com/fcm/send',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': 'key=AAAATBUSzKs:APA91bFDorxTw-AXVrFTGhVEtnobQHRLQ2g8pHJqnw5fDwMiFBKPS6kBgatdWDBdKHwnpszMMxzhltpAvvML97Kn6QXSRTQh5dADQ7EUirzQdxfEHAfhmOu1e0IHc-WrKroIOi7Xz6K4c2PUP1gq_El75ppfIHepXw'
-                },
-                data: {
-                    'to':notification_key,
-                    'notification': {
-                      'title':'SupremeCourt',
-                      'body':'Hearing was confirmed at '+booking.timeslot+'. Press to view details of confirmed booking.',
-                      'click_action':'com.example.skynet.supremecourt_TARGET_NOTIFICATION'
-                    },
-                    'data' : {
-                      'hearingId' : hearingId
-                    }
-                  }
-              })
-              .then((response) => {
-                console.log(response.data)
-                res.status(200).end();
-              })
-              .catch((err) => {
-                console.log('Sending notification message failed')
-                console.log(err);
-                res.send(400).end();
-              })
+          sendNotification(hearingId,registrationIds,'Hearing'+hearingId+'was confirmed\
+           at '+booking.timeslot+'.\
+           Press to visit the hearing page on the application to confirm within 5 minutes.')
+          .then(() => {
+            console.log('NOTIFICATION SENT')
+            sendSMS(notifiedParties,'Hearing'+hearingId+'was confirmed\
+             at '+booking.timeslot+'.\
+             Visit the hearing page on the application to confirm within 5 minutes.')
+            .catch((err) => {
+              console.log(err);
+            })
+           })
+           .catch((err) => {
+             console.log('Sending notification message failed')
+             console.log(err);
+             res.send(400).end();
+            })
           })
           .catch((err) => {
             console.log('Getting notification_key failed');
@@ -206,8 +181,9 @@ const acceptBooking = (req, res) => {
           })
       })
       .catch((err) => { console.log(err) })
-    })
-    } else if (booking.pendingParties > 1) {
+    }
+    // This is not the last party to accept the request
+    else if (booking.pendingParties > 1) {
         booking.updateAttributes({
           pendingParties: booking.pendingParties -1,
           acceptedParties: updatedAcceptedParties

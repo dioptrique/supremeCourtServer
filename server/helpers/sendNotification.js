@@ -5,7 +5,9 @@ var uuidv4 = require('uuid/v4')
  * @function sendNotification
  * @summary: Send notifications to device groups using FCM
  * Then, a new booking is inserted into the Bookings table
+ * @param {String} hearingId: The hearingId of the hearing
  * @param {String[]} registrationIds: the registrationIds to the send the notifications to
+ * @param {message} registrationIds: the message to be sent
  * @returns Promise
  */
 
