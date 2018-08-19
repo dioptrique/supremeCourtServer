@@ -66,8 +66,7 @@ const bookNow = (req, res, next) => {
   const partyCount = hearingObj.Parties.length;
   var alreadyBooked = false;
   const currTime = TimeAndDate.currDate();
-  var allNos = phoneNos.slice();
-  allNos.push(bookerNo);
+  var allNos;
 
   // If timeslot has already been passed currently return unsuccessful
   if(currTime.getTime() > TimeAndDate.makeDate(hearingDate,timeslot)) {
@@ -122,6 +121,9 @@ const bookNow = (req, res, next) => {
         })
       } else {
         // If there are other parties that need to accept the booking
+        allNos = phoneNos.slice();
+        allNos.push(bookerNo);
+
         var registrationIds = []
         var promises = []
         // Get the corresponding registrationIds to phoneNos
@@ -234,8 +236,6 @@ const bookNow = (req, res, next) => {
                         PhoneNoToRegistrationId
                         .find({where:{phoneNo: bookerNo}})
                         .then((booker) => {
-                          console.log('registrationIdsssss')
-                          console.log(registrationIds)
                           var allParties = registrationIds.slice()
                           allParties.push(booker.registrationId);
                           sendNotification(hearingId,allParties,
@@ -269,7 +269,7 @@ const bookNow = (req, res, next) => {
             .then(() => {
               sendNotification(hearingId,registrationIds, 'Hearing '+hearingId+' was booked at '+timeslot+'. Press to accept/reject booking.')
               .then(() => {
-                sendSMS(phoneNos,'Hearing '+hearingId+' was booked at '+timeslot+'. View the acceptance page to accep/reject booking.')
+                sendSMS(phoneNos,'Hearing '+hearingId+' was booked at '+timeslot+'. View the acceptance page to accept/reject booking.')
                 .then(() => {
                   res.status(200).send({bookingStatus:'successful'})
                 })
