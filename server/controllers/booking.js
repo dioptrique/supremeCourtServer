@@ -244,11 +244,11 @@ const rejectBooking = (req, res) => {
       // fetched from db
       Promise.all(promises).then(() => {
         console.log('RegistrationIds :'+registrationIds)
-        sendNotification(hearingId,registrationIds,'Booking at '+booking.timeslot+' for hearing '+hearingId+' was rejected\
- by '+rejectorNo+'. Press to book again.')
+        sendNotification(hearingId,registrationIds,'Booking at '+booking.timeslot+' for hearing '+hearingId+' was rejected by '
+        +rejectorNo+'. Press to book again.')
         .then(() => {
-          sendSMS(notifiedParties,'Booking at '+booking.timeslot+' for hearing '+hearingId+' was rejected by\
-   by '+rejectorNo+'. Visit your hearing\'s page on the application to book again.')
+          sendSMS(notifiedParties,'Booking at '+booking.timeslot+' for hearing '+hearingId+' was rejected by '
+          +rejectorNo+'. Visit your hearing\'s page on the application to book again.')
           .then(() => res.status(200).end())
           .catch((err) => {
             console.log(err);

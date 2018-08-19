@@ -6,8 +6,10 @@ var Booking = db['Booking'];
 var hearingIdToHearing = require('../data');
 var Sequelize = require('sequelize')
 var sendNotification = require('../helpers/sendNotification')
+var sendSMS = require('../helpers/sendSMS')
 var TimeAndDate = require('../helpers/timeAndDate')
 var Data = require('../data')
+var constants = require('../constants')
 
 const Op = Sequelize.Op;
 
@@ -64,6 +66,10 @@ const bookNow = (req, res, next) => {
   const partyCount = hearingObj.Parties.length;
   var alreadyBooked = false;
   const currTime = TimeAndDate.currDate();
+  var allNos = phoneNos.slice();
+  allNos.push(bookerNo);
+
+  // If timeslot has already been passed currently return unsuccessful
   if(currTime.getTime() > TimeAndDate.makeDate(hearingDate,timeslot)) {
     res.status(200).send({
       bookingStatus:'unsuccessful',
@@ -178,17 +184,20 @@ const bookNow = (req, res, next) => {
                               status: 'expired'
                             })
                             .then(() => {
+                              // Add to booker to expired notification list
                               PhoneNoToRegistrationId
                               .find({where:{phoneNo: bookerNo}})
                               .then((booker) => {
-                                console.log('registrationIdsssss')
-                                console.log(registrationIds)
                                 var allParties = registrationIds.slice()
                                 allParties.push(booker.registrationId);
-                                console.log('allParties')
-                                console.log(allParties);
                                 sendNotification(hearingId,allParties,
-                                                  'Ongoing booking has expired while waiting for all parties to accept. Press to book again.')
+                                                  'Ongoing booking at '+booking.timeslot+' for hearing '+hearingId+' has expired while waiting for all parties to accept. Press to book again.')
+                                                  .then(() => {
+                                                    sendSMS(allNos,'Ongoing booking at '+booking.timeslot+' for hearing '+hearingId+' has expired while waiting for all parties to accept. Visit the hearing page on the applicaiton to book again.')
+                                                    .catch((err) => {
+                                                      console.log(err)
+                                                    })
+                                                  })
                                                   .catch((err) => {
                                                     console.log('Unable to send notification about expiry')
                                                     res.status(400).end();
@@ -206,10 +215,11 @@ const bookNow = (req, res, next) => {
                           console.log(err);
                           res.status(400).end();
                         })
-                      },60000)
+                      },constants.BOOKING_VALIDITY_WINDOW)
                   })
                 }
-              } else { // If a new entry was created
+              // If a new entry was created
+              } else {
                 console.log('Setting timer for booking expiry')
                 setTimeout(() => {
                   Booking
@@ -228,10 +238,14 @@ const bookNow = (req, res, next) => {
                           console.log(registrationIds)
                           var allParties = registrationIds.slice()
                           allParties.push(booker.registrationId);
-                          console.log('allParties')
-                          console.log(allParties);
                           sendNotification(hearingId,allParties,
-                                            'Ongoing booking has expired while waiting for all parties to accept. Press to book again.')
+                                            'Ongoing booking at '+booking.timeslot+' for hearing '+hearingId+' has expired while waiting for all parties to accept. Press to book again.')
+                                            .then(() => {
+                                              sendSMS(allNos,'Ongoing booking at '+booking.timeslot+' for hearing '+hearingId+' has expired while waiting for all parties to accept. Visit the hearing page on the applicaiton to book again.')
+                                              .catch((err) => {
+                                                console.log(err)
+                                              })
+                                            })
                                             .catch((err) => {
                                               console.log('Unable to send notification about expiry')
                                               res.status(400).end();
@@ -249,62 +263,19 @@ const bookNow = (req, res, next) => {
                     console.log(err);
                     res.status(400).end();
                   })
-                },60000)
+                },constants.BOOKING_VALIDITY_WINDOW)
               }
             })
             .then(() => {
-              console.log('RegistrationIds :'+registrationIds)
-              axios({
-                method: 'post',
-                url: 'https://fcm.googleapis.com/fcm/notification',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': 'key=AAAATBUSzKs:APA91bFDorxTw-AXVrFTGhVEtnobQHRLQ2g8pHJqnw5fDwMiFBKPS6kBgatdWDBdKHwnpszMMxzhltpAvvML97Kn6QXSRTQh5dADQ7EUirzQdxfEHAfhmOu1e0IHc-WrKroIOi7Xz6K4c2PUP1gq_El75ppfIHepXw',
-                  'project_id':'326771068075'
-                },
-                data: {
-                  'operation': 'create',
-                  'notification_key_name': uuidv4(),
-                  'registration_ids': registrationIds
-                }
-              })
-              .then((response) => {
-                var notification_key = response.data.notification_key;
-                // Send message to group members
-                axios({
-                  method: 'post',
-                  url: 'https://fcm.googleapis.com/fcm/send',
-                  headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'key=AAAATBUSzKs:APA91bFDorxTw-AXVrFTGhVEtnobQHRLQ2g8pHJqnw5fDwMiFBKPS6kBgatdWDBdKHwnpszMMxzhltpAvvML97Kn6QXSRTQh5dADQ7EUirzQdxfEHAfhmOu1e0IHc-WrKroIOi7Xz6K4c2PUP1gq_El75ppfIHepXw'
-                  },
-                  data: {
-                    'to':notification_key,
-                    'notification': {
-                      'title':'SupremeCourt',
-                      'body':'Time slot '+timeslot+' was selected. Press to confirm.',
-                      'click_action':'com.example.skynet.supremecourt_TARGET_NOTIFICATION'
-                    },
-                    'data' : {
-                      'hearingId' : hearingId
-                    }
-                  }
+              sendNotification(hearingId,registrationIds, 'Hearing '+hearingId+' was booked at '+timeslot+'. Press to accept/reject booking.')
+              .then(() => {
+                sendSMS(phoneNos,'Hearing '+hearingId+' was booked at '+timeslot+'. View the acceptance page to accep/reject booking.')
+                .then(() => {
+                  res.status(200).send({bookingStatus:'successful'})
                 })
-                .then((response) => {
-                  console.log(response.data)
-                  res.status(200).send({
-                    bookingStatus:'successful'
-                  });
-                })
-                .catch((err) => {
-                  console.log(err);
-                  res.status(400).end();
-                })
+                .catch((err) => console.log(err))
               })
-              .catch((err) => {
-                console.log(err);
-                res.status(400).end();
-              })
+              .catch((err) => console.log(err))
             })
             .catch((err) => {
               console.log(err);
