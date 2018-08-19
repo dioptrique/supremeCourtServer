@@ -158,14 +158,14 @@ const acceptBooking = (req, res) => {
         Promise.all(promises).then(() => {
           console.log('RegistrationIds :'+registrationIds)
           sendNotification(hearingId,registrationIds,'Hearing '+hearingId+' was confirmed\
-           at '+booking.timeslot+'.\
-           Press to visit the hearing page on the application to confirm within 5 minutes.')
+        at '+booking.timeslot+'.\
+        Press to visit the hearing page in the application to check booking details.')
           .then(() => {
             console.log('NOTIFICATION SENT')
             console.log(notifiedParties);
             sendSMS(notifiedParties,'Hearing '+hearingId+' was confirmed\
-             at '+booking.timeslot+'.\
-             Visit the hearing page on the application to confirm within 5 minutes.')
+          at '+booking.timeslot+'.\
+          Visit the hearing page in the application to check booking details.')
             .then(() => res.status(200).end())
             .catch((err) => {
               console.log(err);
@@ -244,58 +244,31 @@ const rejectBooking = (req, res) => {
       // fetched from db
       Promise.all(promises).then(() => {
         console.log('RegistrationIds :'+registrationIds)
-        axios({
-          method: 'post',
-          url: 'https://fcm.googleapis.com/fcm/notification',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'key=AAAATBUSzKs:APA91bFDorxTw-AXVrFTGhVEtnobQHRLQ2g8pHJqnw5fDwMiFBKPS6kBgatdWDBdKHwnpszMMxzhltpAvvML97Kn6QXSRTQh5dADQ7EUirzQdxfEHAfhmOu1e0IHc-WrKroIOi7Xz6K4c2PUP1gq_El75ppfIHepXw',
-            'project_id':'326771068075'
-          },
-          data: {
-            'operation': 'create',
-            'notification_key_name': uuidv4(),
-            'registration_ids': registrationIds
-          }
-        })
-        .then((response) => {
-            var notification_key = response.data.notification_key;
-            axios({
-              method: 'post',
-              url: 'https://fcm.googleapis.com/fcm/send',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'key=AAAATBUSzKs:APA91bFDorxTw-AXVrFTGhVEtnobQHRLQ2g8pHJqnw5fDwMiFBKPS6kBgatdWDBdKHwnpszMMxzhltpAvvML97Kn6QXSRTQh5dADQ7EUirzQdxfEHAfhmOu1e0IHc-WrKroIOi7Xz6K4c2PUP1gq_El75ppfIHepXw'
-              },
-              data: {
-                  'to':notification_key,
-                  'notification': {
-                    'title':'SupremeCourt',
-                    'body':'Booking was rejected by a party member at '+booking.timeslot+'. Press to book again.',
-                    'click_action':'com.example.skynet.supremecourt_TARGET_NOTIFICATION'
-                  },
-                  'data' : {
-                    'hearingId' : hearingId
-                  }
-                }
-            })
-            .then((response) => {
-              console.log(response.data)
-              res.status(200).end();
-            })
-            .catch((err) => {
-              console.log('Sending notification message failed')
-              console.log(err);
-              res.send(400).end();
-            })
+        sendNotification(hearingId,registrationIds,'Booking at '+booking.timeslot+' for hearing '+hearingId+' was rejected\
+ by '+rejectorNo+'. Press to book again.')
+        .then(() => {
+          sendSMS(notifiedParties,'Booking at '+booking.timeslot+' for hearing '+hearingId+' was rejected by\
+   by '+rejectorNo+'. Visit your hearing\'s page on the application to book again.')
+          .then(() => res.status(200).end())
+          .catch((err) => {
+            console.log(err);
+            res.status(400).end();
+          })
         })
         .catch((err) => {
-          console.log('Getting notification_key failed');
-          console.log(err);
-          res.status(400).end();
+          console.log(err)
+          res.status(400).end()
         })
-    })
-    .catch((err) => console.log(err));
+
+      })
+      .catch((err) => {
+        res.status(400).end()
+        console.log(err)
+      });
+  })
+  .catch((err) => {
+    res.status(400).end()
+    console.log(err)
   })
 })
 }

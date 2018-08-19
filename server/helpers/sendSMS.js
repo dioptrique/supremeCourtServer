@@ -24,6 +24,6 @@ module.exports = sendSMS = (phoneNos, message) => {
   })
   .then(() => {console.log('Smses sent!')})
   .catch((err) => {
-    console.log(err);
+    throw err;
   })
 }
