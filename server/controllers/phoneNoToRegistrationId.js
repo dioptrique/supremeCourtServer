@@ -111,8 +111,12 @@ const bookNow = (req, res, next) => {
           pendingParties: 0
         })
         .then(() => {
-          res.status(200).send({
+          sendSMS(bookerNo,'This is an auto-generated message:\nCase Number: '+hearingObj.CaseNo+'\nScheduled Time: '+booking.timeslot+'\nHearing Date: '+booking.hearingDate+'\nVenue: '+booking.venue)
+          .then(() => res.status(200).send({
             bookingStatus:'successful'
+          }))
+          .catch((err) => {
+            console.log(err);
           })
         })
         .catch((err) => {
@@ -120,6 +124,7 @@ const bookNow = (req, res, next) => {
           res.status(400).end();
         })
       } else {
+
         // If there are other parties that need to accept the booking
         allNos = phoneNos.slice();
         allNos.push(bookerNo);
@@ -267,11 +272,13 @@ const bookNow = (req, res, next) => {
               }
             })
             .then(() => {
-              sendNotification(hearingId,registrationIds, 'Hearing '+hearingId+' was booked at '+timeslot+'. Press to accept/reject booking.')
+              sendNotification(hearingId,registrationIds, 'Hearing for case '+hearingObj.CaseNo+' was booked at '+timeslot+'. Press to accept/reject booking.')
               .then(() => {
-                sendSMS(phoneNos,'Hearing '+hearingId+' was booked at '+timeslot+'. View the acceptance page to accept/reject booking.')
+                sendSMS(phoneNos,'Hearing for case '+hearingObj.CaseNo+' was booked at '+timeslot+' by other party. View the acceptance page to accept/reject booking.')
                 .then(() => {
-                  res.status(200).send({bookingStatus:'successful'})
+                  sendSMS(bookerNo,'Please wait for the other party/parties to confirm your booking for hearing for case '+hearingObj.CaseNo+'.')
+                  .then(() => res.status(200).send({bookingStatus:'successful'}))
+                  .catch((err) => console.log(err))
                 })
                 .catch((err) => console.log(err))
               })
