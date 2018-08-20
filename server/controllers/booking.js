@@ -113,6 +113,7 @@ const getAvailableTimeslots = (req, res) => {
 const acceptBooking = (req, res) => {
   const hearingId = req.body.hearingId;
   const acceptorNo = req.body.acceptorNo;
+  const hearing = Data.getHearing(hearingId);
 
   Booking.findOne({
     where: {
@@ -125,11 +126,12 @@ const acceptBooking = (req, res) => {
     // party(last acceptor)
     var notifiedParties = booking.acceptedParties.slice();
     notifiedParties.push(booking.bookerNo);
-    console.log('notification parties:')
-    console.log(notifiedParties)
 
     var updatedAcceptedParties = booking.acceptedParties;
     updatedAcceptedParties.push(acceptorNo);
+
+    var allParties = updatedAcceptedParties.slice();
+    allParties.push(booking.bookerNo);
 
     // This is the last party to accept the booking request. This means that
     // The booking will be made at this slot
@@ -156,16 +158,9 @@ const acceptBooking = (req, res) => {
         // Create a notification group on FCM once all the corresponding regIds are
         // fetched from db
         Promise.all(promises).then(() => {
-          console.log('RegistrationIds :'+registrationIds)
-          sendNotification(hearingId,registrationIds,'Hearing '+hearingId+' was confirmed\
-        at '+booking.timeslot+'.\
-        Press to visit the hearing page in the application to check booking details.')
+          sendNotification(hearingId,registrationIds,'Hearing for case '+hearing.CaseNo+' was confirmed at '+booking.timeslot+'.\Press to visit the hearing page in the application to check booking details.')
           .then(() => {
-            console.log('NOTIFICATION SENT')
-            console.log(notifiedParties);
-            sendSMS(notifiedParties,'Hearing '+hearingId+' was confirmed\
-          at '+booking.timeslot+'.\
-          Visit the hearing page in the application to check booking details.')
+            sendSMS(allParties,'This is an auto-generated message:\nCase Number: '+hearing.CaseNo+'\nScheduled Time: '+booking.timeslot+'\nHearing Date: '+booking.hearingDate+'\nVenue: '+booking.venue)
             .then(() => res.status(200).end())
             .catch((err) => {
               console.log(err);
