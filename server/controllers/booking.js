@@ -110,6 +110,8 @@ const getAvailableTimeslots = (req, res) => {
  * @param {object} res: response object
  * @returns
  */
+ // TODO If booking with same bookindId is already expired before acceptance,
+ // deny acceptance of booking
 const acceptBooking = (req, res) => {
   const hearingId = req.body.hearingId;
   const acceptorNo = req.body.acceptorNo;
@@ -203,10 +205,12 @@ const acceptBooking = (req, res) => {
  * @param {object} res: response object
  * @returns
  */
- // TODO send notifications to all other users upon rejection
+ // TODO If booking with same bookindId is already expired before rejection,
+ // deny rejection of booking
 const rejectBooking = (req, res) => {
   const hearingId = req.body.hearingId;
   const rejectorNo = req.body.rejectorNo;
+  const hearingObj = Data.getHearing(hearingId);
 
   Booking.findOne({
     where: {
@@ -239,10 +243,10 @@ const rejectBooking = (req, res) => {
       // fetched from db
       Promise.all(promises).then(() => {
         console.log('RegistrationIds :'+registrationIds)
-        sendNotification(hearingId,registrationIds,'Booking at '+booking.timeslot+' for hearing '+hearingId+' was rejected by '
+        sendNotification(hearingId,registrationIds,'Booking at '+booking.timeslot+' for hearing for case '+hearingObj.CaseNo+' was rejected by '
         +rejectorNo+'. Press to book again.')
         .then(() => {
-          sendSMS(notifiedParties,'Booking at '+booking.timeslot+' for hearing '+hearingId+' was rejected by '
+          sendSMS(notifiedParties,'Booking at '+booking.timeslot+' for hearing for case '+hearingObj.CaseNo+' was rejected by '
           +rejectorNo+'. Visit your hearing\'s page on the application to book again.')
           .then(() => res.status(200).end())
           .catch((err) => {
@@ -254,7 +258,6 @@ const rejectBooking = (req, res) => {
           console.log(err)
           res.status(400).end()
         })
-
       })
       .catch((err) => {
         res.status(400).end()
