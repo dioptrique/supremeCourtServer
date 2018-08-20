@@ -19,6 +19,7 @@ module.exports = sendSMS = (phoneNos, message) => {
     })
     phoneNosInUrl = phoneNosInUrl.slice(0,-1)
   }
+  var augmentedMsg = message + ' Click on this link to go to the hearing page on the applicaiton: com.example.skynet.supremecourt_TARGET_NOTIFICATION'
   const url = 'https://www.isms.com.my/isms_send.php?un='+ISMS_USER+'&pwd='+ISMS_PWD+'&dstno='+phoneNosInUrl+'&msg='+message+'&type=1&sendid=12345678'
   return axios({
     method: 'get',

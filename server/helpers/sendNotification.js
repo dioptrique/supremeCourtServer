@@ -10,7 +10,6 @@ var uuidv4 = require('uuid/v4')
  * @param {message} registrationIds: the message to be sent
  * @returns Promise
  */
-
 module.exports = sendNotification = (hearingId, registrationIds, message) => {
    console.log('RegistrationIds :'+registrationIds)
    return axios({
