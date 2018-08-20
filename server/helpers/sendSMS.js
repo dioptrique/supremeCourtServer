@@ -12,7 +12,7 @@ var constants = require('constants')
 module.exports = sendSMS = (phoneNos, message) => {
   var phoneNosInUrl = ''
   if(!(phoneNos instanceof Array)) {
-    phoneNosInUrl = phoneNosInUrl.concat('65'+phoneNo)
+    phoneNosInUrl = phoneNosInUrl.concat('65'+phoneNos)
   } else {
     phoneNos.forEach((phoneNo) => {
       phoneNosInUrl = phoneNosInUrl.concat('65'+phoneNo+';');

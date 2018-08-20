@@ -198,9 +198,9 @@ const bookNow = (req, res, next) => {
                                 var allParties = registrationIds.slice()
                                 allParties.push(booker.registrationId);
                                 sendNotification(hearingId,allParties,
-                                                  'Ongoing booking at '+booking.timeslot+' for hearing '+hearingId+' has expired while waiting for all parties to accept. Press to book again.')
+                                                  'Ongoing booking at '+booking.timeslot+' for hearing for case '+hearingObj.CaseNo+' has expired while waiting for all parties to accept. Press to book again.')
                                                   .then(() => {
-                                                    sendSMS(allNos,'Ongoing booking at '+booking.timeslot+' for hearing '+hearingId+' has expired while waiting for all parties to accept. Visit the hearing page on the applicaiton to book again.')
+                                                    sendSMS(allNos,'Ongoing booking at '+booking.timeslot+' for hearing for case '+hearingObj.CaseNo+' has expired while waiting for all parties to accept. Visit the hearing page on the applicaiton to book again.')
                                                     .catch((err) => {
                                                       console.log(err)
                                                     })
@@ -244,9 +244,9 @@ const bookNow = (req, res, next) => {
                           var allParties = registrationIds.slice()
                           allParties.push(booker.registrationId);
                           sendNotification(hearingId,allParties,
-                                            'Ongoing booking at '+booking.timeslot+' for hearing '+hearingId+' has expired while waiting for all parties to accept. Press to book again.')
+                                            'Ongoing booking at '+booking.timeslot+' for hearing for case '+hearingObj.CaseNo+' has expired while waiting for all parties to accept. Press to book again.')
                                             .then(() => {
-                                              sendSMS(allNos,'Ongoing booking at '+booking.timeslot+' for hearing '+hearingId+' has expired while waiting for all parties to accept. Visit the hearing page on the applicaiton to book again.')
+                                              sendSMS(allNos,'Ongoing booking at '+booking.timeslot+' for hearing for case '+hearingObj.CaseNo+' has expired while waiting for all parties to accept. Visit the hearing page on the applicaiton to book again.')
                                               .catch((err) => {
                                                 console.log(err)
                                               })
