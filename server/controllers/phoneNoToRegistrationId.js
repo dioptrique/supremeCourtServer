@@ -111,7 +111,7 @@ const bookNow = (req, res, next) => {
           pendingParties: 0
         })
         .then(() => {
-          sendSMS(bookerNo,'This is an auto-generated message:\nCase Number: '+hearingObj.CaseNo+'\nScheduled Time: '+booking.timeslot+'\nHearing Date: '+booking.hearingDate+'\nVenue: '+booking.venue)
+          sendSMS(hearingId,bookerNo,':\nCase Number: '+hearingObj.CaseNo+'\nScheduled Time: '+booking.timeslot+'\nHearing Date: '+booking.hearingDate+'\nVenue: '+booking.venue)
           .then(() => res.status(200).send({
             bookingStatus:'successful'
           }))
@@ -200,7 +200,7 @@ const bookNow = (req, res, next) => {
                                 sendNotification(hearingId,allParties,
                                                   'Ongoing booking at '+booking.timeslot+' for hearing for case '+hearingObj.CaseNo+' has expired while waiting for all parties to accept. Press to book again.')
                                                   .then(() => {
-                                                    sendSMS(allNos,'Ongoing booking at '+booking.timeslot+' for hearing for case '+hearingObj.CaseNo+' has expired while waiting for all parties to accept. Visit the hearing page on the applicaiton to book again.')
+                                                    sendSMS(hearingId,allNos,':\nOngoing booking at '+booking.timeslot+' for hearing for case '+hearingObj.CaseNo+' has expired while waiting for all parties to accept. Visit the hearing page on the applicaiton to book again.')
                                                     .catch((err) => {
                                                       console.log(err)
                                                     })
@@ -246,7 +246,7 @@ const bookNow = (req, res, next) => {
                           sendNotification(hearingId,allParties,
                                             'Ongoing booking at '+booking.timeslot+' for hearing for case '+hearingObj.CaseNo+' has expired while waiting for all parties to accept. Press to book again.')
                                             .then(() => {
-                                              sendSMS(allNos,'Ongoing booking at '+booking.timeslot+' for hearing for case '+hearingObj.CaseNo+' has expired while waiting for all parties to accept. Visit the hearing page on the applicaiton to book again.')
+                                              sendSMS(hearingId,allNos,':\nOngoing booking at '+booking.timeslot+' for hearing for case '+hearingObj.CaseNo+' has expired while waiting for all parties to accept. Visit the hearing page on the applicaiton to book again.')
                                               .catch((err) => {
                                                 console.log(err)
                                               })
@@ -274,9 +274,9 @@ const bookNow = (req, res, next) => {
             .then(() => {
               sendNotification(hearingId,registrationIds, 'Hearing for case '+hearingObj.CaseNo+' was booked at '+timeslot+'. Press to accept/reject booking.')
               .then(() => {
-                sendSMS(phoneNos,'Hearing for case '+hearingObj.CaseNo+' was booked at '+timeslot+' by other party. View the acceptance page to accept/reject booking.')
+                sendSMS(hearingId,phoneNos,':\nHearing for case '+hearingObj.CaseNo+' was booked at '+timeslot+' by other party. View the acceptance page to accept/reject booking.')
                 .then(() => {
-                  sendSMS(bookerNo,'Please wait for the other party/parties to confirm your booking for hearing for case '+hearingObj.CaseNo+'.')
+                  sendSMS(hearingId,bookerNo,'Please wait for the other party/parties to confirm your booking for hearing for case '+hearingObj.CaseNo+'.')
                   .then(() => res.status(200).send({bookingStatus:'successful'}))
                   .catch((err) => console.log(err))
                 })

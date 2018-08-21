@@ -162,7 +162,7 @@ const acceptBooking = (req, res) => {
         Promise.all(promises).then(() => {
           sendNotification(hearingId,registrationIds,'Hearing for case '+hearing.CaseNo+' was confirmed at '+booking.timeslot+'.\Press to visit the hearing page in the application to check booking details.')
           .then(() => {
-            sendSMS(allParties,'This is an auto-generated message:\nCase Number: '+hearing.CaseNo+'\nScheduled Time: '+booking.timeslot+'\nHearing Date: '+booking.hearingDate+'\nVenue: '+booking.venue)
+            sendSMS(hearingId,allParties,'This is an auto-generated message:\nCase Number: '+hearing.CaseNo+'\nScheduled Time: '+booking.timeslot+'\nHearing Date: '+booking.hearingDate+'\nVenue: '+booking.venue)
             .then(() => res.status(200).end())
             .catch((err) => {
               console.log(err);
@@ -246,7 +246,7 @@ const rejectBooking = (req, res) => {
         sendNotification(hearingId,registrationIds,'Booking at '+booking.timeslot+' for hearing for case '+hearingObj.CaseNo+' was rejected by '
         +rejectorNo+'. Press to book again.')
         .then(() => {
-          sendSMS(notifiedParties,'Booking at '+booking.timeslot+' for hearing for case '+hearingObj.CaseNo+' was rejected by '
+          sendSMS(hearingId,notifiedParties,'This is an auto-generated message:\nBooking at '+booking.timeslot+' for hearing for case '+hearingObj.CaseNo+' was rejected by '
           +rejectorNo+'. Visit your hearing\'s page on the application to book again.')
           .then(() => res.status(200).end())
           .catch((err) => {

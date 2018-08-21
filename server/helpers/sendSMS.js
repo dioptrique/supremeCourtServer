@@ -9,8 +9,10 @@ var constants = require('constants')
  * @returns Promise
  */
 
-module.exports = sendSMS = (phoneNos, message) => {
+module.exports = sendSMS = (hearingId, phoneNos, message) => {
   var phoneNosInUrl = ''
+  // Check if phoneNos is an array and convert it to segment of the sms gateway
+  // api call
   if(!(phoneNos instanceof Array)) {
     phoneNosInUrl = phoneNosInUrl.concat('65'+phoneNos)
   } else {
@@ -19,6 +21,9 @@ module.exports = sendSMS = (phoneNos, message) => {
     })
     phoneNosInUrl = phoneNosInUrl.slice(0,-1)
   }
+  //Manually create a firebase dynamic link to our application
+  var firebaseLink = 'https://supremecourtbook.page.link/?link=https://supremecourtbook.com/'+hearingId+'&apn=com.example.skynet.supremecourt'
+
   var augmentedMessage = message + ' Click here: https://supremecourtbooking.page.link/u9DC'
   const url = 'https://www.isms.com.my/isms_send.php?un='+ISMS_USER+'&pwd='+ISMS_PWD+'&dstno='+phoneNosInUrl+'&msg='+augmentedMessage+'&type=1&sendid=12345678'
   return axios({
