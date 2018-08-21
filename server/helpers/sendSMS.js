@@ -25,7 +25,7 @@ module.exports = sendSMS = (hearingId, phoneNos, message) => {
   //Manually create a firebase dynamic link to our application
   var firebaseLink = 'https://supremecourtbook.page.link/?link=https://supremecourtbook.com/'+hearingId+'&apn=com.example.skynet.supremecourt'
   // Make post request to get a short url link to bring user to the scheduling activity
-  axios({
+  return axios({
     method:'post',
     url:'https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyBdrdtILupHd4pZzxFkTSyuccilYEBN_uY',
     headers:{
