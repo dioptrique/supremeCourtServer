@@ -40,7 +40,7 @@ module.exports = sendSMS = (hearingId, phoneNos, message) => {
   })
   .then((response) => {
     var firebaseLink = response.data.shortLink;
-    var augmentedMessage = message + ' Click here to sign up: '+firebaseLink;
+    var augmentedMessage = message + ' Click here to view booking page: '+firebaseLink;
 
     const url = 'https://www.isms.com.my/isms_send.php?un='+ISMS_USER+'&pwd='+ISMS_PWD+'&dstno='+phoneNosInUrl+'&msg='+augmentedMessage+'&type=1&sendid=12345678'
     return axios({
